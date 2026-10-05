@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PharmaPulse 3D - PubChem Drug Discovery & QSAR Analyzer</title>
+  <meta name="description" content="Aplikasi analisis kimia farmasi, druglikeness (Lipinski RO5, Veber, Ghose), dan visualisasi molekul 3D berbasis PubChem PUG-REST API.">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- 3Dmol.js for 3D Molecular rendering -->
+  <script src="https://3dmol.org/build/3Dmol-min.js"></script>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-container">
+    
+    <!-- Top Navigation Header -->
+    <header class="app-header">
+      <div class="logo-group">
+        <div class="logo-icon">
+          <i class="fa-solid fa-atom"></i>
+        </div>
+        <div class="logo-text">
+          <h1>PharmaPulse <span class="badge-3d">3D</span></h1>
+          <p class="subtitle">PubChem Powered Drug Discovery & QSAR Physicochemical Analyzer</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <span class="status-indicator">
+          <span class="pulse-dot"></span> PubChem PUG-REST API Live
+        </span>
+        <button id="btn-compare-mode" class="btn btn-secondary">
+          <i class="fa-solid fa-columns"></i> Mode Komparasi Objek
+        </button>
+        <button id="btn-export-pdf" class="btn btn-primary">
+          <i class="fa-solid fa-file-export"></i> Cetak Laporan
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Search & Preset Section -->
+    <section class="search-section">
+      <div class="search-box-wrapper">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="text" id="compound-search-input" placeholder="Ketik nama obat (misal: Paracetamol, Atorvastatin, Amoxicillin), SMILES, atau CID..." autocomplete="off">
+        <button id="btn-search" class="btn btn-accent">
+          <span>Cari Senyawa</span> <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
+
+      <!-- Quick Preset Suggestions -->
+      <div class="preset-container">
+        <span class="preset-label"><i class="fa-solid fa-bolt"></i> Presets Populer:</span>
+        <div class="preset-pills">
+          <button class="pill-btn" data-compound="Paracetamol">Paracetamol</button>
+          <button class="pill-btn" data-compound="Aspirin">Aspirin</button>
+          <button class="pill-btn" data-compound="Ibuprofen">Ibuprofen</button>
+          <button class="pill-btn active" data-compound="Atorvastatin">Atorvastatin</button>
+          <button class="pill-btn" data-compound="Amoxicillin">Amoxicillin</button>
+          <button class="pill-btn" data-compound="Ciprofloxacin">Ciprofloxacin</button>
+          <button class="pill-btn" data-compound="Artemisinin">Artemisinin</button>
+          <button class="pill-btn" data-compound="Remdesivir">Remdesivir</button>
+          <button class="pill-btn" data-compound="Caffeine">Caffeine</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Display Grid -->
+    <main class="main-content">
+
+      <!-- Loading State Overlay -->
+      <div id="loading-overlay" class="loading-overlay hidden">
+        <div class="spinner-box">
+          <div class="spinner"></div>
+          <p id="loading-text">Menghubungi Basis Data PubChem NLM/NIH...</p>
+        </div>
+      </div>
+
+      <!-- Single Compound Analysis View -->
+      <div id="single-view-container" class="view-container">
+        
+        <!-- Summary Banner / Title Row -->
+        <div class="compound-header-card">
+          <div class="compound-main-info">
+            <div class="compound-title-badge">
+              <h2 id="compound-name">Atorvastatin</h2>
+              <span id="compound-cid-badge" class="badge badge-outline">PubChem CID: 60823</span>
+            </div>
+            <p id="compound-iupac" class="iupac-text">(3R,5R)-7-[2-(4-fluorophenyl)-5-isopropyl-3-phenyl-4-(phenylcarbamoyl)pyrrol-1-yl]-3,5-dihydroxyheptanoic acid</p>
+            <div class="tags-row">
+              <span id="formula-tag" class="tag"><i class="fa-solid fa-flask"></i> C33H35FN2O5</span>
+              <span id="mw-tag" class="tag"><i class="fa-solid fa-weight-hanging"></i> 558.64 g/mol</span>
+              <span id="logp-tag" class="tag"><i class="fa-solid fa-droplet"></i> LogP: 5.7</span>
+              <span id="tpsa-tag" class="tag"><i class="fa-solid fa-layer-group"></i> TPSA: 111.53 Å²</span>
+            </div>
+          </div>
+          <div class="druglikeness-verdict-card" id="verdict-card">
+            <div class="verdict-score-ring">
+              <span id="verdict-score-num">3/4</span>
+              <small>RO5 Score</small>
+            </div>
+            <div class="verdict-text">
+              <h4 id="verdict-status-title">Peringatan Druglikeness</h4>
+              <p id="verdict-status-desc">Melanggar 1 aturan Lipinski (MW > 500 g/mol & LogP > 5).</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <nav class="content-tabs">
+          <button class="tab-btn active" data-tab="tab-3d-overview">
+            <i class="fa-solid fa-cube"></i> Visualisasi 3D & 2D
+          </button>
+          <button class="tab-btn" data-tab="tab-druglikeness">
+            <i class="fa-solid fa-shield-halved"></i> Evaluasi Lipinski & QSAR
+          </button>
+          <button class="tab-btn" data-tab="tab-descriptors">
+            <i class="fa-solid fa-list-check"></i> Deskriptor Fisikokimia
+          </button>
+          <button class="tab-btn" data-tab="tab-safety">
+            <i class="fa-solid fa-triangle-exclamation"></i> Toksisitas & GHS Hazards
+          </button>
+        </nav>
+
+        <!-- Tab 1: 3D Conformer & 2D Overview -->
+        <div id="tab-3d-overview" class="tab-pane active">
+          <div class="overview-grid">
+            
+            <!-- 3D Conformer Viewer Card -->
+            <div class="card viewer-card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-cube"></i> Viewer Konformer 3D Molekul Live</h3>
+                <div class="viewer-controls">
+                  <select id="render-style-select" class="select-sm">
+                    <option value="ballAndStick">Ball & Stick</option>
+                    <option value="stick">Stick (Bintang)</option>
+                    <option value="sphere">Space-filling (Sphere)</option>
+                    <option value="wireframe">Wireframe</option>
+                  </select>
+                  <button id="btn-spin-toggle" class="btn-icon" title="Toggle Auto Spin"><i class="fa-solid fa-rotate"></i></button>
+                  <button id="btn-reset-view" class="btn-icon" title="Reset Camera"><i class="fa-solid fa-compress"></i></button>
+                </div>
+              </div>
+              <div class="card-body viewer-body">
+                <div id="mol3d-viewport" class="mol3d-viewport"></div>
+                <div class="viewer-legend">
+                  <span class="element-tag c-tag">C (Abu)</span>
+                  <span class="element-tag h-tag">H (Putih)</span>
+                  <span class="element-tag o-tag">O (Merah)</span>
+                  <span class="element-tag n-tag">N (Biru)</span>
+                  <span class="element-tag f-tag">F/Cl (Hijau)</span>
+                  <span class="element-tag s-tag">S (Kuning)</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 2D Structure & Identifiers Card -->
+            <div class="card side-structure-card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-image"></i> Struktur 2D & Identitas</h3>
+              </div>
+              <div class="card-body">
+                <div class="img-2d-box">
+                  <img id="img-2d-structure" src="" alt="Struktur 2D Molekul">
+                </div>
+                <div class="identifiers-list">
+                  <div class="id-item">
+                    <span class="id-label">PubChem CID:</span>
+                    <span class="id-val" id="val-cid">-</span>
+                  </div>
+                  <div class="id-item">
+                    <span class="id-label">Formulasi Molekul:</span>
+                    <span class="id-val" id="val-formula">-</span>
+                  </div>
+                  <div class="id-item">
+                    <span class="id-label">InChIKey:</span>
+                    <span class="id-val code-font" id="val-inchikey">-</span>
+                  </div>
+                  <div class="id-item">
+                    <span class="id-label">Canonical SMILES:</span>
+                    <div class="smiles-box" id="val-smiles">-</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Tab 2: Druglikeness & QSAR Filter Analysis -->
+        <div id="tab-druglikeness" class="tab-pane">
+          <div class="druglikeness-grid">
+            
+            <!-- Lipinski Rule Card -->
+            <div class="card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-square-check"></i> Lipinski's Rule of Five (RO5)</h3>
+                <span class="info-tooltip" title="Aturan standar kelayakan penyerapan oral obat menurut Christopher A. Lipinski">i</span>
+              </div>
+              <div class="card-body">
+                <div class="rule-checklist">
+                  
+                  <div class="rule-item" id="rule-mw">
+                    <div class="rule-icon"><i class="fa-solid fa-circle-check"></i></div>
+                    <div class="rule-details">
+                      <div class="rule-title">Bobot Molekul (MW) &le; 500 g/mol</div>
+                      <div class="rule-val-bar">
+                        <span class="val-text" id="val-rule-mw">558.64 g/mol</span>
+                        <div class="progress-bar"><div class="progress-fill" id="bar-rule-mw" style="width: 100%;"></div></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="rule-item" id="rule-logp">
+                    <div class="rule-icon"><i class="fa-solid fa-circle-check"></i></div>
+                    <div class="rule-details">
+                      <div class="rule-title">Partisi Lipofilitas (XLogP3) &le; 5</div>
+                      <div class="rule-val-bar">
+                        <span class="val-text" id="val-rule-logp">5.7</span>
+                        <div class="progress-bar"><div class="progress-fill" id="bar-rule-logp" style="width: 100%;"></div></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="rule-item" id="rule-hbd">
+                    <div class="rule-icon"><i class="fa-solid fa-circle-check"></i></div>
+                    <div class="rule-details">
+                      <div class="rule-title">H-Bond Donors (HBD) &le; 5</div>
+                      <div class="rule-val-bar">
+                        <span class="val-text" id="val-rule-hbd">4</span>
+                        <div class="progress-bar"><div class="progress-fill" id="bar-rule-hbd" style="width: 80%;"></div></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="rule-item" id="rule-hba">
+                    <div class="rule-icon"><i class="fa-solid fa-circle-check"></i></div>
+                    <div class="rule-details">
+                      <div class="rule-title">H-Bond Acceptors (HBA) &le; 10</div>
+                      <div class="rule-val-bar">
+                        <span class="val-text" id="val-rule-hba">7</span>
+                        <div class="progress-bar"><div class="progress-fill" id="bar-rule-hba" style="width: 70%;"></div></div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+            <!-- Additional Filters (Veber, Ghose, Pfizer 3/75) -->
+            <div class="card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-filter"></i> Saringan Tambahan (Veber, Ghose & Pfizer 3/75)</h3>
+              </div>
+              <div class="card-body">
+                
+                <div class="filter-box" id="filter-veber">
+                  <div class="filter-top">
+                    <h4>Veber's Bioavailability Filter</h4>
+                    <span class="badge" id="veber-status">Lolos</span>
+                  </div>
+                  <p class="filter-desc">Syarat: Rotatable Bonds &le; 10 & TPSA &le; 140 Å² (Ideal untuk permeabilitas membran sel & bioavailabilitas oral).</p>
+                  <div class="stat-mini-grid">
+                    <div><span>Rotatable Bonds:</span> <strong id="val-veber-rotb">12</strong></div>
+                    <div><span>TPSA:</span> <strong id="val-veber-tpsa">111.5 Å²</strong></div>
+                  </div>
+                </div>
+
+                <div class="filter-box" id="filter-ghose">
+                  <div class="filter-top">
+                    <h4>Ghose Filter (Drug-like Database Match)</h4>
+                    <span class="badge" id="ghose-status">Lolos</span>
+                  </div>
+                  <p class="filter-desc">Syarat: MW (160-480), LogP (-0.4 s/d 5.6), Jumlah Atom (20-70).</p>
+                </div>
+
+                <div class="filter-box" id="filter-pfizer">
+                  <div class="filter-top">
+                    <h4>Pfizer 3/75 Toxicity Risk Rule</h4>
+                    <span class="badge" id="pfizer-status">Risiko Rendah</span>
+                  </div>
+                  <p class="filter-desc">Obat dengan LogP > 3 dan TPSA < 75 Å² memiliki risiko toksisitas 2.5x lebih tinggi dalam uji *in vivo*.</p>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Radar Chart Card -->
+            <div class="card radar-card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-chart-pie"></i> Profil Radar Lipofilitas & Polaritas</h3>
+              </div>
+              <div class="card-body flex-center">
+                <canvas id="druglikeness-radar-chart"></canvas>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Tab 3: Detailed Descriptors -->
+        <div id="tab-descriptors" class="tab-pane">
+          <div class="card">
+            <div class="card-header">
+              <h3><i class="fa-solid fa-microscope"></i> Deskriptor Fisikokimia Lengkap (PubChem)</h3>
+            </div>
+            <div class="card-body">
+              <div class="descriptors-grid">
+                
+                <div class="descriptor-card">
+                  <span class="d-label">Molecular Weight</span>
+                  <span class="d-val" id="d-mw">-</span>
+                  <span class="d-unit">g/mol</span>
+                </div>
+
+                <div class="descriptor-card">
+                  <span class="d-label">XLogP3 (Partition Coeff)</span>
+                  <span class="d-val" id="d-logp">-</span>
+                  <span class="d-unit">Log unit</span>
+                </div>
+
+                <div class="descriptor-card">
+                  <span class="d-label">Topological Polar Surface (TPSA)</span>
+                  <span class="d-val" id="d-tpsa">-</span>
+                  <span class="d-unit">Å²</span>
+                </div>
+
+                <div class="descriptor-card">
+                  <span class="d-label">H-Bond Donors</span>
+                  <span class="d-val" id="d-hbd">-</span>
+                  <span class="d-unit">gugus</span>
+                </div>
+
+                <div class="descriptor-card">
+                  <span class="d-label">H-Bond Acceptors</span>
+                  <span class="d-val" id="d-hba">-</span>
+                  <span class="d-unit">gugus</span>
+                </div>
+
+                <div class="descriptor-card">
+                  <span class="d-label">Rotatable Bond Count</span>
+                  <span class="d-val" id="d-rotb">-</span>
+                  <span class="d-unit">ikatan</span>
+                </div>
+
+                <div class="descriptor-card">
+                  <span class="d-label">Molecular Complexity</span>
+                  <span class="d-val" id="d-complexity">-</span>
+                  <span class="d-unit">skor PubChem</span>
+                </div>
+
+                <div class="descriptor-card">
+                  <span class="d-label">Formal Charge</span>
+                  <span class="d-val" id="d-charge">-</span>
+                  <span class="d-unit">e</span>
+                </div>
+
+                <div class="descriptor-card">
+                  <span class="d-label">Heavy Atom Count</span>
+                  <span class="d-val" id="d-heavyatoms">-</span>
+                  <span class="d-unit">atom non-H</span>
+                </div>
+
+                <div class="descriptor-card">
+                  <span class="d-label">Exact Mass</span>
+                  <span class="d-val" id="d-exactmass">-</span>
+                  <span class="d-unit">g/mol</span>
+                </div>
+
+                <div class="descriptor-card">
+                  <span class="d-label">Monoisotopic Mass</span>
+                  <span class="d-val" id="d-monoiso">-</span>
+                  <span class="d-unit">Da</span>
+                </div>
+
+                <div class="descriptor-card">
+                  <span class="d-label">Defined Atom Stereocenters</span>
+                  <span class="d-val" id="d-stereocenters">-</span>
+                  <span class="d-unit">pusat kiral</span>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 4: GHS Safety & Toxicity -->
+        <div id="tab-safety" class="tab-pane">
+          <div class="card">
+            <div class="card-header">
+              <h3><i class="fa-solid fa-triangle-exclamation"></i> Klasifikasi Bahaya Kimia & Toksisitas GHS</h3>
+            </div>
+            <div class="card-body">
+              <div id="ghs-container">
+                <div class="ghs-summary-box">
+                  <div class="ghs-signal-word" id="ghs-signal">BAHAYA / WARNING</div>
+                  <p id="ghs-description">Informasi keselamatan kimia diambil langsung dari PubChem Laboratory Chemical Safety Summary (LCSS).</p>
+                </div>
+                <div class="ghs-statements-list" id="ghs-statements-list">
+                  <!-- Dynamic GHS statements -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Multi-Drug Comparison View (Hidden by default) -->
+      <div id="compare-view-container" class="view-container hidden">
+        <div class="compare-header">
+          <h2><i class="fa-solid fa-scale-balanced"></i> Mode Komparasi Senyawa Farmasi</h2>
+          <p>Bandingkan parameter fisikokimia dan aturan Lipinski hingga 3 senyawa secara berdampingan.</p>
+          <button id="btn-close-compare" class="btn btn-sm btn-outline"><i class="fa-solid fa-xmark"></i> Kembali ke Tampilan Tunggal</button>
+        </div>
+
+        <div class="compare-inputs-grid">
+          <div class="compare-input-card">
+            <label>Senyawa 1:</label>
+            <input type="text" id="cmp-input-1" value="Paracetamol" placeholder="Cari senyawa 1...">
+          </div>
+          <div class="compare-input-card">
+            <label>Senyawa 2:</label>
+            <input type="text" id="cmp-input-2" value="Ibuprofen" placeholder="Cari senyawa 2...">
+          </div>
+          <div class="compare-input-card">
+            <label>Senyawa 3 (Opsional):</label>
+            <input type="text" id="cmp-input-3" value="Aspirin" placeholder="Cari senyawa 3...">
+          </div>
+          <button id="btn-run-compare" class="btn btn-accent"><i class="fa-solid fa-arrows-rotate"></i> Muat Komparasi</button>
+        </div>
+
+        <div class="compare-table-wrapper">
+          <table class="compare-table" id="compare-table">
+            <thead>
+              <tr id="cmp-header-row">
+                <th>Parameter / Deskriptor</th>
+                <!-- Dynamic drug headers -->
+              </tr>
+            </thead>
+            <tbody id="cmp-body-rows">
+              <!-- Dynamic comparison rows -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- App Footer -->
+    <footer class="app-footer">
+      <p>PharmaPulse 3D &copy; 2026 | Dikembangkan untuk Industri & Akademis Kimia Farmasi | Data oleh NCBI PubChem PUG-REST</p>
+    </footer>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
