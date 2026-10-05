@@ -133,26 +133,209 @@ function setupEventListeners() {
   });
 }
 
-// Fetch Compound Data from PubChem PUG-REST API
+// Pre-cached fallback dataset for instant & reliable offline loading
+const PRESET_FALLBACK_DATA = {
+  'atorvastatin': {
+    cid: 60823,
+    props: {
+      Title: 'Atorvastatin',
+      MolecularWeight: '558.64',
+      MolecularFormula: 'C33H35FN2O5',
+      CanonicalSMILES: 'CC(C)C1=C(C(=C(N1CCC(CC(CC(=O)O)O)O)C2=CC=C(C=C2)F)C3=CC=CC=C3)C(=O)NC4=CC=CC=C4',
+      InChIKey: 'XRFVWWKOKDORCA-UHFFFAOYSA-N',
+      IUPACName: '(3R,5R)-7-[2-(4-fluorophenyl)-5-isopropyl-3-phenyl-4-(phenylcarbamoyl)pyrrol-1-yl]-3,5-dihydroxyheptanoic acid',
+      XLogP3: 5.7,
+      TPSA: 111.53,
+      HBondDonorCount: 4,
+      HBondAcceptorCount: 7,
+      RotatableBondCount: 12,
+      HeavyAtomCount: 41,
+      Complexity: 865,
+      Charge: 0
+    }
+  },
+  'paracetamol': {
+    cid: 1983,
+    props: {
+      Title: 'Paracetamol',
+      MolecularWeight: '151.16',
+      MolecularFormula: 'C8H9NO2',
+      CanonicalSMILES: 'CC(=O)NC1=CC=C(C=C1)O',
+      InChIKey: 'RZVAJINKPMORJF-UHFFFAOYSA-N',
+      IUPACName: 'N-(4-hydroxyphenyl)acetamide',
+      XLogP: 0.5,
+      TPSA: 49.33,
+      HBondDonorCount: 2,
+      HBondAcceptorCount: 2,
+      RotatableBondCount: 1,
+      HeavyAtomCount: 11,
+      Complexity: 139,
+      Charge: 0
+    }
+  },
+  'aspirin': {
+    cid: 2244,
+    props: {
+      Title: 'Aspirin',
+      MolecularWeight: '180.16',
+      MolecularFormula: 'C9H8O4',
+      CanonicalSMILES: 'CC(=O)OC1=CC=CC=C1C(=O)O',
+      InChIKey: 'BSYVMGGFCVRPOT-UHFFFAOYSA-N',
+      IUPACName: '2-acetyloxybenzoic acid',
+      XLogP: 1.2,
+      TPSA: 63.6,
+      HBondDonorCount: 1,
+      HBondAcceptorCount: 4,
+      RotatableBondCount: 3,
+      HeavyAtomCount: 13,
+      Complexity: 212,
+      Charge: 0
+    }
+  },
+  'ibuprofen': {
+    cid: 3672,
+    props: {
+      Title: 'Ibuprofen',
+      MolecularWeight: '206.28',
+      MolecularFormula: 'C13H18O2',
+      CanonicalSMILES: 'CC(C)CC1=CC=C(C=C1)C(C)C(=O)O',
+      InChIKey: 'HEFNNWSISSHWHO-UHFFFAOYSA-N',
+      IUPACName: '2-[4-(2-methylpropyl)phenyl]propanoic acid',
+      XLogP: 3.5,
+      TPSA: 37.3,
+      HBondDonorCount: 1,
+      HBondAcceptorCount: 2,
+      RotatableBondCount: 4,
+      HeavyAtomCount: 15,
+      Complexity: 228,
+      Charge: 0
+    }
+  },
+  'amoxicillin': {
+    cid: 33613,
+    props: {
+      Title: 'Amoxicillin',
+      MolecularWeight: '365.4',
+      MolecularFormula: 'C16H19N3O5S',
+      CanonicalSMILES: 'CC1(C(N2C(S1)C(C2=O)NC(=O)C(C3=CC=C(C=C3)O)N)C(=O)O)C',
+      InChIKey: 'LWWYWOOGSUGGPA-UHFFFAOYSA-N',
+      IUPACName: '(2S,5R,6R)-6-[[(2R)-2-amino-2-(4-hydroxyphenyl)acetyl]amino]-3,3-dimethyl-7-oxo-4-thia-1-azabicyclo[3.2.0]heptane-2-carboxylic acid',
+      XLogP: -2.0,
+      TPSA: 158.0,
+      HBondDonorCount: 4,
+      HBondAcceptorCount: 6,
+      RotatableBondCount: 4,
+      HeavyAtomCount: 25,
+      Complexity: 592,
+      Charge: 0
+    }
+  },
+  'ciprofloxacin': {
+    cid: 2764,
+    props: {
+      Title: 'Ciprofloxacin',
+      MolecularWeight: '331.34',
+      MolecularFormula: 'C17H18FN3O3',
+      CanonicalSMILES: 'C1CC1N2C=C(C(=O)C3=CC(=C(C=C32)N4CCNCC4)F)C(=O)O',
+      InChIKey: 'MYSWBQDOAIFAAS-UHFFFAOYSA-N',
+      IUPACName: '1-cyclopropyl-6-fluoro-4-oxo-7-piperazin-1-ylquinoline-3-carboxylic acid',
+      XLogP: -1.1,
+      TPSA: 74.6,
+      HBondDonorCount: 2,
+      HBondAcceptorCount: 6,
+      RotatableBondCount: 3,
+      HeavyAtomCount: 24,
+      Complexity: 546,
+      Charge: 0
+    }
+  },
+  'artemisinin': {
+    cid: 68827,
+    props: {
+      Title: 'Artemisinin',
+      MolecularWeight: '282.33',
+      MolecularFormula: 'C15H22O5',
+      CanonicalSMILES: 'CC1CCC2C(C(=O)OC3C24C1CCC(O3)(OO4)C)C',
+      InChIKey: 'BLUAFEHBHGQBEI-UHFFFAOYSA-N',
+      IUPACName: 'octahydro-3,6,9-trimethyl-3,12-epoxy-12H-pyrano[4.3-j]-1,2-benzodioxepin-10(3H)-one',
+      XLogP: 2.8,
+      TPSA: 53.9,
+      HBondDonorCount: 0,
+      HBondAcceptorCount: 5,
+      RotatableBondCount: 0,
+      HeavyAtomCount: 20,
+      Complexity: 483,
+      Charge: 0
+    }
+  },
+  'remdesivir': {
+    cid: 121304016,
+    props: {
+      Title: 'Remdesivir',
+      MolecularWeight: '602.6',
+      MolecularFormula: 'C27H35N6O8P',
+      CanonicalSMILES: 'CCC(CC)COC(=O)C(C)NP(=O)(OCC1C(C(C(O1)(C#N)C2=CC=C3N2N=CN=C3N)O)O)OC4=CC=CC=C4',
+      InChIKey: 'RWWYLEGWBNMUTW-UHFFFAOYSA-N',
+      IUPACName: '2-ethylbutyl (2S)-2-[[[(2R,3S,4R,5R)-5-(4-aminopyrrolo[2,1-f][1,2,4]triazin-7-yl)-5-cyano-3,4-dihydroxyoxolan-2-yl]methoxy-phenoxyphosphoryl]amino]propanoate',
+      XLogP: 1.9,
+      TPSA: 204.0,
+      HBondDonorCount: 4,
+      HBondAcceptorCount: 12,
+      RotatableBondCount: 13,
+      HeavyAtomCount: 42,
+      Complexity: 1040,
+      Charge: 0
+    }
+  },
+  'caffeine': {
+    cid: 2519,
+    props: {
+      Title: 'Caffeine',
+      MolecularWeight: '194.19',
+      MolecularFormula: 'C8H10N4O2',
+      CanonicalSMILES: 'CN1C=NC2=C1C(=O)N(C(=O)N2C)C',
+      InChIKey: 'RYYVLZFGVIUXBG-UHFFFAOYSA-N',
+      IUPACName: '1,3,7-trimethylpurine-2,6-dione',
+      XLogP: -0.1,
+      TPSA: 58.4,
+      HBondDonorCount: 0,
+      HBondAcceptorCount: 3,
+      RotatableBondCount: 0,
+      HeavyAtomCount: 14,
+      Complexity: 293,
+      Charge: 0
+    }
+  }
+};
+
+// Fetch Compound Data from PubChem PUG-REST API with Offline Fallback
 async function fetchCompoundData(query) {
   showLoading(`Menghubungi PubChem API untuk: "${query}"...`);
+
+  const queryKey = query.toLowerCase().trim();
+  const cached = PRESET_FALLBACK_DATA[queryKey];
+
   try {
     // Step 1: Search CID
     let cid = query;
     const isNum = /^\d+$/.test(query);
 
     if (!isNum) {
-      const searchUrl = `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${encodeURIComponent(query)}/cids/JSON`;
-      const res = await fetch(searchUrl);
-      if (!res.ok) throw new Error('Senyawa tidak ditemukan di basis data PubChem.');
-      const data = await res.json();
-      if (!data.IdentifierList || !data.IdentifierList.CID || data.IdentifierList.CID.length === 0) {
-        throw new Error('Senyawa tidak ditemukan.');
+      try {
+        const searchUrl = `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${encodeURIComponent(query)}/cids/JSON`;
+        const res = await fetch(searchUrl);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.IdentifierList && data.IdentifierList.CID && data.IdentifierList.CID.length > 0) {
+            cid = data.IdentifierList.CID[0];
+          }
+        }
+      } catch (err) {
+        console.warn('Network search failed, checking cached presets...');
       }
-      cid = data.IdentifierList.CID[0];
     }
 
-    // Step 2: Fetch Compound Properties with robust fallback for XLogP / XLogP3
+    // Step 2: Fetch Compound Properties with robust fallback
     let props = null;
     const baseFields = [
       'Title',
@@ -174,40 +357,74 @@ async function fetchCompoundData(query) {
       'HeavyAtomCount'
     ];
 
-    // Attempt 1: with XLogP
+    if (cid && typeof cid !== 'string' || isNum || cid !== query) {
+      // Attempt 1: with XLogP
+      try {
+        const fields1 = [...baseFields, 'XLogP'].join(',');
+        const res1 = await fetch(`https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${cid}/property/${fields1}/JSON`);
+        if (res1.ok) {
+          const data1 = await res1.json();
+          props = data1.PropertyTable.Properties[0];
+        }
+      } catch (err) {}
+
+      // Attempt 2: with XLogP3 if Attempt 1 failed
+      if (!props) {
+        try {
+          const fields2 = [...baseFields, 'XLogP3'].join(',');
+          const res2 = await fetch(`https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${cid}/property/${fields2}/JSON`);
+          if (res2.ok) {
+            const data2 = await res2.json();
+            props = data2.PropertyTable.Properties[0];
+          }
+        } catch (err) {}
+      }
+
+      // Attempt 3: Safe fallback without LogP in batch request
+      if (!props) {
+        try {
+          const safeFields = baseFields.join(',');
+          const res3 = await fetch(`https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${cid}/property/${safeFields}/JSON`);
+          if (res3.ok) {
+            const data3 = await res3.json();
+            props = data3.PropertyTable.Properties[0];
+          }
+        } catch (err) {}
+      }
+    }
+
+    // Fallback to pre-cached preset data if online API was unreachable/failed
+    if (!props && cached) {
+      cid = cached.cid;
+      props = cached.props;
+    }
+
+    if (!props) {
+      throw new Error(`Data senyawa "${query}" tidak dapat dimuat. Pastikan koneksi internet terhubung.`);
+    }
+
+    // Step 3: Fetch 3D Conformer SDF
+    showLoading('Mengunduh Konformer 3D Molekul...');
+    let sdfData = '';
     try {
-      const fields1 = [...baseFields, 'XLogP'].join(',');
-      const res1 = await fetch(`https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${cid}/property/${fields1}/JSON`);
-      if (res1.ok) {
-        const data1 = await res1.json();
-        props = data1.PropertyTable.Properties[0];
+      const sdfUrl = `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${cid}/SDF?record_type=3d`;
+      const sdfRes = await fetch(sdfUrl);
+      if (sdfRes.ok) {
+        sdfData = await sdfRes.text();
       }
     } catch (err) {
-      console.warn('Query XLogP failed, trying XLogP3...');
+      console.warn('Conformer 3D tidak tersedia, mencoba 2D conformer fallback...');
     }
 
-    // Attempt 2: with XLogP3 if Attempt 1 failed
-    if (!props) {
-      try {
-        const fields2 = [...baseFields, 'XLogP3'].join(',');
-        const res2 = await fetch(`https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${cid}/property/${fields2}/JSON`);
-        if (res2.ok) {
-          const data2 = await res2.json();
-          props = data2.PropertyTable.Properties[0];
-        }
-      } catch (err) {
-        console.warn('Query XLogP3 failed, trying base properties...');
+    // Step 4: Fetch Safety/GHS Summary (Optional)
+    let ghsData = null;
+    try {
+      const ghsUrl = `https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/data/compound/${cid}/JSON?heading=GHS+Classification`;
+      const ghsRes = await fetch(ghsUrl);
+      if (ghsRes.ok) {
+        ghsData = await ghsRes.json();
       }
-    }
-
-    // Attempt 3: Safe fallback without LogP in batch request
-    if (!props) {
-      const safeFields = baseFields.join(',');
-      const res3 = await fetch(`https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${cid}/property/${safeFields}/JSON`);
-      if (!res3.ok) throw new Error('Gagal mengambil deskriptor sifat molekul.');
-      const data3 = await res3.json();
-      props = data3.PropertyTable.Properties[0];
-    }
+    } catch (err) {}
 
     currentCompoundData = {
       cid,
@@ -220,7 +437,19 @@ async function fetchCompoundData(query) {
     renderSingleCompoundView(currentCompoundData);
 
   } catch (error) {
-    alert(`Error: ${error.message}`);
+    console.error('Fetch error:', error);
+    if (cached) {
+      // Ultra-safe fallback if any step crashed
+      currentCompoundData = {
+        cid: cached.cid,
+        props: cached.props,
+        sdfData: '',
+        ghsData: null
+      };
+      renderSingleCompoundView(currentCompoundData);
+    } else {
+      alert(`Pemberitahuan: ${error.message}`);
+    }
   } finally {
     hideLoading();
   }
@@ -628,40 +857,57 @@ async function runMultiDrugComparison() {
 }
 
 async function fetchDrugPropsSimple(name) {
-  // Search CID
-  const searchUrl = `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${encodeURIComponent(name)}/cids/JSON`;
-  const res = await fetch(searchUrl);
-  if (!res.ok) throw new Error(`Senyawa "${name}" tidak ditemukan.`);
-  const data = await res.json();
-  const cid = data.IdentifierList.CID[0];
+  const queryKey = name.toLowerCase().trim();
+  const cached = PRESET_FALLBACK_DATA[queryKey];
 
-  // Fetch Props with fallback
-  let props = null;
   try {
-    const res1 = await fetch(`https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${cid}/property/Title,MolecularWeight,MolecularFormula,XLogP,TPSA,HBondDonorCount,HBondAcceptorCount,RotatableBondCount/JSON`);
-    if (res1.ok) {
-      const data1 = await res1.json();
-      props = data1.PropertyTable.Properties[0];
-    }
-  } catch(e) {}
+    // Search CID
+    const searchUrl = `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${encodeURIComponent(name)}/cids/JSON`;
+    const res = await fetch(searchUrl);
+    if (!res.ok) throw new Error(`Senyawa "${name}" tidak ditemukan.`);
+    const data = await res.json();
+    const cid = data.IdentifierList.CID[0];
 
-  if (!props) {
+    // Fetch Props with fallback
+    let props = null;
     try {
-      const res2 = await fetch(`https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${cid}/property/Title,MolecularWeight,MolecularFormula,XLogP3,TPSA,HBondDonorCount,HBondAcceptorCount,RotatableBondCount/JSON`);
-      if (res2.ok) {
-        const data2 = await res2.json();
-        props = data2.PropertyTable.Properties[0];
+      const res1 = await fetch(`https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${cid}/property/Title,MolecularWeight,MolecularFormula,XLogP,TPSA,HBondDonorCount,HBondAcceptorCount,RotatableBondCount/JSON`);
+      if (res1.ok) {
+        const data1 = await res1.json();
+        props = data1.PropertyTable.Properties[0];
       }
     } catch(e) {}
+
+    if (!props) {
+      try {
+        const res2 = await fetch(`https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${cid}/property/Title,MolecularWeight,MolecularFormula,XLogP3,TPSA,HBondDonorCount,HBondAcceptorCount,RotatableBondCount/JSON`);
+        if (res2.ok) {
+          const data2 = await res2.json();
+          props = data2.PropertyTable.Properties[0];
+        }
+      } catch(e) {}
+    }
+
+    if (!props) {
+      const res3 = await fetch(`https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${cid}/property/Title,MolecularWeight,MolecularFormula,TPSA,HBondDonorCount,HBondAcceptorCount,RotatableBondCount/JSON`);
+      if (res3.ok) {
+        const data3 = await res3.json();
+        props = data3.PropertyTable.Properties[0];
+      }
+    }
+
+    if (props) {
+      return { cid, name, props };
+    }
+  } catch(err) {
+    console.warn('Online compare fetch failed for:', name);
   }
 
-  if (!props) {
-    const res3 = await fetch(`https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${cid}/property/Title,MolecularWeight,MolecularFormula,TPSA,HBondDonorCount,HBondAcceptorCount,RotatableBondCount/JSON`);
-    const data3 = await res3.json();
-    props = data3.PropertyTable.Properties[0];
+  if (cached) {
+    return { cid: cached.cid, name: cached.props.Title || name, props: cached.props };
   }
 
-  return { cid, name, props };
+  throw new Error(`Data senyawa "${name}" tidak dapat diunduh.`);
 }
 
 function renderComparisonTable(drugs) {
