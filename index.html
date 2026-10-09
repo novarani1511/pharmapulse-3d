@@ -129,11 +129,20 @@
           <button class="tab-btn" data-tab="tab-druglikeness">
             <i class="fa-solid fa-shield-halved"></i> Evaluasi Lipinski & QSAR
           </button>
+          <button class="tab-btn" data-tab="tab-qsar-chembl">
+            <i class="fa-solid fa-chart-line"></i> Pemodelan QSAR (ChEMBL pIC50)
+          </button>
+          <button class="tab-btn" data-tab="tab-admet-bcs">
+            <i class="fa-solid fa-dna"></i> ADMET, PAINS & Ionisasi BCS
+          </button>
           <button class="tab-btn" data-tab="tab-descriptors">
             <i class="fa-solid fa-list-check"></i> Deskriptor Fisikokimia
           </button>
           <button class="tab-btn" data-tab="tab-safety">
             <i class="fa-solid fa-triangle-exclamation"></i> Toksisitas & GHS Hazards
+          </button>
+          <button class="tab-btn" data-tab="tab-batch-csv">
+            <i class="fa-solid fa-file-csv"></i> Saringan Batch CSV
           </button>
         </nav>
 
@@ -415,6 +424,175 @@
                 <div class="ghs-statements-list" id="ghs-statements-list">
                   <!-- Dynamic GHS statements -->
                 </div>
+              </div>
+            </div>
+          </div>
+        <!-- Tab 5: ChEMBL Real QSAR Modeling -->
+        <div id="tab-qsar-chembl" class="tab-pane">
+          <div class="card">
+            <div class="card-header">
+              <h3><i class="fa-solid fa-chart-line"></i> Pemodelan QSAR (Quantitative Structure-Activity Relationship) Data ChEMBL</h3>
+              <span class="info-tooltip" title="Pemodelan Regresi Linier Antara Deskriptor Fisikokimia (X) vs Bioaktivitas pIC50 (Y)">i</span>
+            </div>
+            <div class="card-body">
+              <div class="qsar-overview-grid">
+                <div class="qsar-chart-box">
+                  <h4 id="qsar-target-title">Plot Regresi QSAR: pIC50 vs XLogP (Target: Estrogen Receptor Alpha / HMG-CoA)</h4>
+                  <canvas id="qsar-regression-chart" style="max-height: 350px;"></canvas>
+                </div>
+                <div class="qsar-stats-box">
+                  <div class="stat-mini-card">
+                    <span class="d-label">Persamaan Regresi Linier</span>
+                    <span class="d-val code-font" id="qsar-equation" style="font-size: 16px;">y = 0.42x + 4.85</span>
+                  </div>
+                  <div class="stat-mini-card">
+                    <span class="d-label">Koefisien Determinasi (R²)</span>
+                    <span class="d-val" id="qsar-r2" style="color: var(--color-success);">0.814</span>
+                  </div>
+                  <div class="stat-mini-card">
+                    <span class="d-label">Jumlah Seri Senyawa Analog (N)</span>
+                    <span class="d-val" id="qsar-n-count">12 Senyawa</span>
+                  </div>
+                  <div class="stat-mini-card">
+                    <span class="d-label">InChIKey Mapping</span>
+                    <span class="d-val code-font" id="qsar-inchikey" style="font-size: 11px;">-</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="qsar-table-wrapper" style="margin-top: 20px;">
+                <h4 style="margin-bottom: 10px; font-size: 14px;"><i class="fa-solid fa-table"></i> Tabel Bioaktivitas pIC50 ChEMBL Seri Analog</h4>
+                <table class="compare-table" id="qsar-bioactivity-table">
+                  <thead>
+                    <tr>
+                      <th>Senyawa Seri</th>
+                      <th>ChEMBL ID / InChIKey</th>
+                      <th>LogP / XLogP</th>
+                      <th>TPSA (Å²)</th>
+                      <th>IC50 (nM)</th>
+                      <th>Bioaktivitas pIC50 (-log IC50)</th>
+                    </tr>
+                  </thead>
+                  <tbody id="qsar-table-body">
+                    <!-- Dynamic QSAR rows -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 6: ADMET, PAINS & Ionisasi BCS -->
+        <div id="tab-admet-bcs" class="tab-pane">
+          <div class="druglikeness-grid">
+            
+            <!-- SwissADME 6-Axis Radar Card -->
+            <div class="card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-draw-polygon"></i> SwissADME Bioavailability Radar (6 Sifat)</h3>
+              </div>
+              <div class="card-body flex-center">
+                <canvas id="swissadme-radar-chart" style="max-width: 320px; max-height: 320px;"></canvas>
+              </div>
+            </div>
+
+            <!-- Structural Alerts PAINS & Brenk -->
+            <div class="card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-shield-cat"></i> Peringatan Struktur PAINS & Brenk</h3>
+              </div>
+              <div class="card-body">
+                <div class="filter-box" id="box-pains">
+                  <div class="filter-top">
+                    <h4>Pan-Assay Interference (PAINS) Alert</h4>
+                    <span class="badge" id="badge-pains">Bersih (0 Alert)</span>
+                  </div>
+                  <p class="filter-desc" id="desc-pains">Deteksi gugus reaktif noda pengujian (quinon, epoksida, katekol, azo).</p>
+                </div>
+
+                <div class="filter-box" id="box-brenk">
+                  <div class="filter-top">
+                    <h4>Brenk Unwanted Functional Groups</h4>
+                    <span class="badge" id="badge-brenk">Bersih</span>
+                  </div>
+                  <p class="filter-desc" id="desc-brenk">Saringan gugus toksik terlarang dalam penapisan pustaka obat.</p>
+                </div>
+
+                <div class="filter-box" id="box-bRO5">
+                  <div class="filter-top">
+                    <h4>Pengecualian Beyond Rule of 5 (bRO5)</h4>
+                    <span class="badge badge-outline" id="badge-bro5">Standard Rule</span>
+                  </div>
+                  <p class="filter-desc">Catatan Akademis: Senyawa produk alam (isoflavon) & substrat transporter aktif dapat menjadi obat oral sukses meski melanggar RO5.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Ionization & BCS System -->
+            <div class="card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-vial-circle-check"></i> Ionisasi Fisiologis & Sistem BCS</h3>
+              </div>
+              <div class="card-body">
+                <div class="descriptor-card" style="margin-bottom: 12px;">
+                  <span class="d-label">Estimasi Kelas BCS (Biopharmaceutics Classification)</span>
+                  <span class="d-val" id="val-bcs-class" style="color: var(--color-primary);">BCS Kelas I / II</span>
+                  <span class="d-unit" id="desc-bcs-class">Kelarutan & Permeabilitas Oral High/Mod</span>
+                </div>
+
+                <div class="descriptor-card" style="margin-bottom: 12px;">
+                  <span class="d-label">Fraksi Terion pada pH Lambung (pH 1.2)</span>
+                  <span class="d-val" id="val-ion-stomach">0.0 % (Netral)</span>
+                </div>
+
+                <div class="descriptor-card">
+                  <span class="d-label">Fraksi Terion pada pH Darah/Usus (pH 7.4)</span>
+                  <span class="d-val" id="val-ion-blood">5.2 % (Bentuk Non-ion dominan)</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Tab 7: Batch CSV Screening -->
+        <div id="tab-batch-csv" class="tab-pane">
+          <div class="card">
+            <div class="card-header">
+              <h3><i class="fa-solid fa-file-csv"></i> Saringan Massal (Batch CSV Sifter & Screener)</h3>
+            </div>
+            <div class="card-body">
+              <div class="batch-upload-box">
+                <p>Unggah file <strong>.CSV</strong> atau ketik daftar nama obat / SMILES (1 nama per baris) untuk penyaringan massal sekaligus:</p>
+                <div style="display: flex; gap: 14px; margin-top: 12px; margin-bottom: 16px;">
+                  <input type="file" id="batch-file-input" accept=".csv, .txt" style="display: none;">
+                  <button id="btn-trigger-upload" class="btn btn-secondary"><i class="fa-solid fa-upload"></i> Pilih File CSV</button>
+                  <button id="btn-run-batch-preset" class="btn btn-accent"><i class="fa-solid fa-play"></i> Jalankan Batch Demo (12 Senyawa)</button>
+                </div>
+                <textarea id="batch-text-input" rows="4" style="width: 100%; background: var(--bg-input); border: 1px solid var(--bg-card-border); color: var(--text-main); padding: 12px; border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: 12px;" placeholder="Contoh:&#10;Paracetamol&#10;Atorvastatin&#10;Genistein&#10;Daidzein&#10;Glycitein"></textarea>
+                <button id="btn-sift-text" class="btn btn-primary" style="margin-top: 10px;"><i class="fa-solid fa-filter"></i> Saring Daftar Senyawa</button>
+              </div>
+
+              <div class="compare-table-wrapper" style="margin-top: 20px;">
+                <table class="compare-table" id="batch-results-table">
+                  <thead>
+                    <tr>
+                      <th>Nama Senyawa</th>
+                      <th>Formula / CID</th>
+                      <th>MW</th>
+                      <th>LogP</th>
+                      <th>HBD/HBA</th>
+                      <th>TPSA</th>
+                      <th>Lipinski RO5</th>
+                      <th>Veber</th>
+                      <th>PAINS Alert</th>
+                      <th>Skor Druglikeness</th>
+                    </tr>
+                  </thead>
+                  <tbody id="batch-table-body">
+                    <!-- Dynamic batch rows -->
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>

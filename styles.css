@@ -1012,3 +1012,52 @@ body {
   justify-content: center;
   align-items: center;
 }
+
+/* QSAR Layout Styles */
+.qsar-overview-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 900px) {
+  .qsar-overview-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.qsar-chart-box {
+  background: rgba(15, 23, 42, 0.7);
+  padding: 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--bg-card-border);
+}
+
+.qsar-chart-box h4 {
+  font-size: 14px;
+  color: var(--text-main);
+  margin-bottom: 12px;
+}
+
+.qsar-stats-box {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.stat-mini-card {
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--bg-card-border);
+  border-radius: var(--radius-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.batch-upload-box {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px dashed var(--color-primary);
+  border-radius: var(--radius-sm);
+  padding: 20px;
+}
