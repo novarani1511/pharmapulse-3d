@@ -7,9 +7,9 @@ footer: 'Disusun oleh Novarani | https://github.com/novarani1511/pharmapulse-3d'
 ---
 
 # 🧪 PharmaPulse 3D
-### PubChem Powered Drug Discovery & QSAR Physicochemical Analyzer
+### PubChem & ChEMBL Powered Drug Discovery, QSAR & ADMET Analyzer
 
-Aplikasi Berbasis Web untuk Penapisan Kelayakan Obat (*Druglikeness*), Evaluasi Lipinski RO5, & Visualisasi 3D Konformer Molekul secara Real-Time.
+Aplikasi Berbasis Web untuk Regresi Linier Bioaktivitas QSAR (pIC50), Radar 6-Sifat SwissADME, Saringan PAINS/Brenk, Ionisasi BCS, Saringan Massal (Batch CSV), & Visualisasi 3D Konformer Molekul (34 Senyawa Obat & Bahan Alam).
 
 **Disusun oleh:** Novarani  
 **Bidang:** Kimia Farmasi / Industri Farmasi  
