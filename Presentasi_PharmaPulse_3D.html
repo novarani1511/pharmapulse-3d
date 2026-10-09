@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Presentasi Proyek - PharmaPulse 3D</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --bg-dark: #090d16;
+      --card-bg: rgba(17, 24, 39, 0.85);
+      --border-color: rgba(255, 255, 255, 0.1);
+      --primary: #06b6d4;
+      --secondary: #8b5cf6;
+      --accent: #3b82f6;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.15) 0%, transparent 40%);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    .slide-container {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .slide {
+      position: absolute;
+      width: 90%;
+      max-width: 1200px;
+      height: 82vh;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 45px 55px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      opacity: 0;
+      visibility: hidden;
+      transform: scale(0.95) translateY(20px);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+      transform: scale(1) translateY(0);
+    }
+
+    /* Header Slide */
+    .slide-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 16px;
+    }
+
+    .slide-header h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 28px;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .slide-header h2 i {
+      color: var(--primary);
+    }
+
+    .slide-tag {
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 14px;
+      border-radius: 20px;
+      background: rgba(6, 182, 212, 0.15);
+      color: var(--primary);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      letter-spacing: 0.5px;
+    }
+
+    /* Body Slide */
+    .slide-body {
+      flex: 1;
+      padding: 24px 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    /* Grid Layouts */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; }
+    .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 18px; }
+
+    .feature-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 22px;
+      transition: transform 0.2s;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(6, 182, 212, 0.4);
+    }
+
+    .feature-card h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 18px;
+      margin-bottom: 10px;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .feature-card p {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* Title Slide Specifics */
+    .title-slide-content {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .title-slide-content .main-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 48px;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -1px;
+    }
+
+    .title-slide-content .sub-title {
+      font-size: 20px;
+      color: var(--text-muted);
+      max-width: 750px;
+    }
+
+    .presenter-box {
+      margin-top: 20px;
+      padding: 14px 28px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-color);
+      border-radius: 30px;
+      font-size: 14px;
+      color: var(--text-main);
+    }
+
+    /* Bullet List Styling */
+    .bullet-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .bullet-list li {
+      font-size: 16px;
+      color: var(--text-main);
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: rgba(255,255,255,0.02);
+      padding: 12px 18px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+    }
+
+    .bullet-list li i {
+      color: var(--primary);
+      margin-top: 4px;
+    }
+
+    /* Footer Slide */
+    .slide-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--border-color);
+      padding-top: 14px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* Controls Bar */
+    .nav-controls {
+      position: absolute;
+      bottom: 25px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: rgba(15, 23, 42, 0.9);
+      padding: 10px 24px;
+      border-radius: 30px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      z-index: 100;
+    }
+
+    .nav-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-main);
+      font-size: 18px;
+      cursor: pointer;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+
+    .nav-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--primary);
+    }
+
+    .slide-counter {
+      font-family: 'Fira Code', monospace;
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .code-pill {
+      font-family: 'Fira Code', monospace;
+      font-size: 12px;
+      background: rgba(6, 182, 212, 0.1);
+      color: var(--primary);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="slide-container">
+
+    <!-- SLIDE 1: TITLE SLIDE -->
+    <div class="slide active">
+      <div class="slide-header">
+        <span class="slide-tag">PRESENTASI PROYEK KIMIA FARMASI</span>
+        <span class="code-pill">PharmaPulse 3D v1.0</span>
+      </div>
+      <div class="slide-body title-slide-content">
+        <i class="fa-solid fa-atom" style="font-size: 64px; color: var(--primary);"></i>
+        <h1 class="main-title">PharmaPulse 3D</h1>
+        <p class="sub-title">PubChem Powered Drug Discovery & QSAR Physicochemical Analyzer</p>
+        <p style="font-size: 14px; color: var(--text-muted); max-width: 600px;">
+          Aplikasi Berbasis Web untuk Penapisan Kelayakan Obat (<em>Druglikeness</em>), Evaluasi Lipinski RO5, & Visualisasi 3D Konformer Molekul secara Real-Time.
+        </p>
+        <div class="presenter-box">
+          <i class="fa-solid fa-user-graduate" style="color: var(--primary); margin-right: 8px;"></i>
+          <strong>Disusun oleh:</strong> Novarani | Program Kimia Farmasi / Industri Farmasi
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>Tekan tombol &rarr; atau Spasi untuk lanjut</span>
+        <span>Slide 1 dari 8</span>
+      </div>
+    </div>
+
+    <!-- SLIDE 2: LATAR BELAKANG -->
+    <div class="slide">
+      <div class="slide-header">
+        <h2><i class="fa-solid fa-flask"></i> Latar Belakang & Permasalahan</h2>
+        <span class="slide-tag">URGENSI PENELITIAN</span>
+      </div>
+      <div class="slide-body grid-2">
+        <div class="feature-card">
+          <h3><i class="fa-solid fa-triangle-exclamation"></i> Tantangan Desain Obat Klasik</h3>
+          <p>Proses penemuan & formulasi obat tradisional membutuhkan waktu bertahun-tahun dan biaya tinggi. Banyak calon molekul obat gagal pada tahap pengujian klinis akibat sifat permeabilitas dan absorpsi oral yang buruk.</p>
+        </div>
+        <div class="feature-card">
+          <h3><i class="fa-solid fa-shield-halved"></i> Peran Aturan Lipinski (RO5)</h3>
+          <p>Christopher A. Lipinski merumuskan Aturan Empat Parameter (Lipinski's Rule of Five) untuk memprediksi secara cepat apakah suatu molekul obat memiliki permeabilitas membran sel dan sifat bioavailabilitas oral yang ideal.</p>
+        </div>
+        <div class="feature-card">
+          <h3><i class="fa-solid fa-database"></i> Kebutuhan Akses Data Real-Time</h3>
+          <p>Laboratorium akademis dan QC/R&D industri farmasi memerlukan alat bantu komputasi yang terhubung secara otomatis dengan basis data molekul ilmiah terpercaya tanpa perlu menginput parameter fisikokimia secara manual.</p>
+        </div>
+        <div class="feature-card">
+          <h3><i class="fa-solid fa-cube"></i> Pentingnya Spatial 3D Conformer</h3>
+          <p>Pemahaman konformasi 3D molekul (panjang ikatan, gugus fungsi, dan kepolaran ruang) sangat vital dalam memprediksi interaksi obat dengan reseptor biologis target.</p>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>PharmaPulse 3D - Presentasi Akademis</span>
+        <span>Slide 2 dari 8</span>
+      </div>
+    </div>
+
+    <!-- SLIDE 3: SOLUSI & INOVASI -->
+    <div class="slide">
+      <div class="slide-header">
+        <h2><i class="fa-solid fa-lightbulb"></i> Solusi & Inovasi PharmaPulse 3D</h2>
+        <span class="slide-tag">INOVASI TEKNOLOGI</span>
+      </div>
+      <div class="slide-body grid-3">
+        <div class="feature-card">
+          <h3><i class="fa-solid fa-plug"></i> Integrasi PubChem API</h3>
+          <p>Terhubung langsung dengan <strong>PubChem PUG-REST API (NIH/NLM)</strong> secara gratis dan tanpa API key, menarik 15+ deskriptor fisikokimia secara otomatis dalam hitungan milidetik.</p>
+        </div>
+        <div class="feature-card">
+          <h3><i class="fa-solid fa-cube"></i> Engine 3Dmol.js</h3>
+          <p>Visualisator 3D konformer molekul interaktif yang dapat diputar 360°, di-zoom, dan diubah mode tampilannya (<em>Ball & Stick, Spacefill, Wireframe</em>) sesuai standar atom CPK.</p>
+        </div>
+        <div class="feature-card">
+          <h3><i class="fa-solid fa-chart-pie"></i> Multi-QSAR Evaluator</h3>
+          <p>Evaluasi otomatis Lipinski RO5, Veber Bioavailability Filter, Ghose Filter, Pfizer 3/75 Toxicity Risk, serta grafik radar polaritas molekul berbasis Chart.js.</p>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>PharmaPulse 3D - Presentasi Akademis</span>
+        <span>Slide 3 dari 8</span>
+      </div>
+    </div>
+
+    <!-- SLIDE 4: ARSITEKTUR SISTEM -->
+    <div class="slide">
+      <div class="slide-header">
+        <h2><i class="fa-solid fa-network-wired"></i> Arsitektur Sistem & Alur Data</h2>
+        <span class="slide-tag">ALUR KERJA DATA</span>
+      </div>
+      <div class="slide-body">
+        <ul class="bullet-list">
+          <li>
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <div>
+              <strong>1. Pencarian Input Pengguna:</strong> Pengguna memasukkan Nama Obat (misal: <em>Paracetamol, Atorvastatin</em>), SMILES, atau PubChem CID.
+            </div>
+          </li>
+          <li>
+            <i class="fa-solid fa-server"></i>
+            <div>
+              <strong>2. Query PUG-REST PubChem API:</strong> Aplikasi melakukan kueri HTTP REST API untuk mendapatkan CID, deskriptor sifat fisikokimia, dan file koordinat 3D SDF.
+            </div>
+          </li>
+          <li>
+            <i class="fa-solid fa-calculator"></i>
+            <div>
+              <strong>3. Pengolahan Komputasi QSAR & Lipinski:</strong> Algoritma mengevaluasi pelanggaran batas Lipinski (MW &le; 500, LogP &le; 5, HBD &le; 5, HBA &le; 10) & aturan pendukung.
+            </div>
+          </li>
+          <li>
+            <i class="fa-solid fa-desktop"></i>
+            <div>
+              <strong>4. Rendering UI Dashboard & 3D Viewer:</strong> Menampilkan hasil evaluasi pada antarmuka modern Dark Glassmorphism beserta grafik radar dan viewer 3D.
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="slide-footer">
+        <span>PharmaPulse 3D - Presentasi Akademis</span>
+        <span>Slide 4 dari 8</span>
+      </div>
+    </div>
+
+    <!-- SLIDE 5: EVALUASI LIPINSKI & QSAR -->
+    <div class="slide">
+      <div class="slide-header">
+        <h2><i class="fa-solid fa-square-check"></i> Parameter Evaluasi Lipinski RO5 & QSAR</h2>
+        <span class="slide-tag">STANDAR EVALUASI</span>
+      </div>
+      <div class="slide-body grid-2">
+        <div class="feature-card">
+          <h3><i class="fa-solid fa-list-check"></i> 4 Aturan Lipinski (RO5)</h3>
+          <ul style="font-size: 13px; color: var(--text-muted); margin-left: 15px; margin-top: 8px;">
+            <li><strong>Molecular Weight (MW):</strong> &le; 500 g/mol</li>
+            <li><strong>Partition Coefficient (LogP):</strong> &le; 5</li>
+            <li><strong>H-Bond Donors (HBD):</strong> &le; 5 (gugus -OH, -NH)</li>
+            <li><strong>H-Bond Acceptors (HBA):</strong> &le; 10 (atom O, N)</li>
+          </ul>
+        </div>
+        <div class="feature-card">
+          <h3><i class="fa-solid fa-filter"></i> Saringan Tambahan Bioavailabilitas</h3>
+          <ul style="font-size: 13px; color: var(--text-muted); margin-left: 15px; margin-top: 8px;">
+            <li><strong>Veber Rule:</strong> RotB &le; 10 & TPSA &le; 140 Å²</li>
+            <li><strong>Ghose Filter:</strong> MW (160-480), LogP (-0.4 s/d 5.6)</li>
+            <li><strong>Pfizer 3/75 Rule:</strong> LogP > 3 & TPSA < 75 Å² (Risiko Toksisitas Tinggi)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>PharmaPulse 3D - Presentasi Akademis</span>
+        <span>Slide 5 dari 8</span>
+      </div>
+    </div>
+
+    <!-- SLIDE 6: DEMO UJI KASUS -->
+    <div class="slide">
+      <div class="slide-header">
+        <h2><i class="fa-solid fa-vial"></i> Contoh Studi Kasus Pengujian Obat</h2>
+        <span class="slide-tag">HASIL EVALUASI</span>
+      </div>
+      <div class="slide-body grid-3">
+        <div class="feature-card">
+          <h3 style="color: var(--success);"><i class="fa-solid fa-circle-check"></i> Paracetamol</h3>
+          <p><strong>MW:</strong> 151.16 g/mol | <strong>LogP:</strong> 0.5<br>
+          <strong>HBD:</strong> 2 | <strong>HBA:</strong> 2<br>
+          <strong style="color: var(--success);">Skor RO5: 4/4 (Lolos Ideal)</strong></p>
+        </div>
+        <div class="feature-card">
+          <h3 style="color: var(--warning);"><i class="fa-solid fa-circle-exclamation"></i> Atorvastatin</h3>
+          <p><strong>MW:</strong> 558.64 g/mol | <strong>LogP:</strong> 5.7<br>
+          <strong>HBD:</strong> 4 | <strong>HBA:</strong> 7<br>
+          <strong style="color: var(--warning);">Skor RO5: 2/4 (Melanggar MW & LogP)</strong></p>
+        </div>
+        <div class="feature-card">
+          <h3 style="color: var(--success);"><i class="fa-solid fa-circle-check"></i> Amoxicillin</h3>
+          <p><strong>MW:</strong> 365.40 g/mol | <strong>LogP:</strong> -2.0<br>
+          <strong>HBD:</strong> 4 | <strong>HBA:</strong> 6<br>
+          <strong style="color: var(--success);">Skor RO5: 4/4 (Lolos Antibiotik)</strong></p>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>PharmaPulse 3D - Presentasi Akademis</span>
+        <span>Slide 6 dari 8</span>
+      </div>
+    </div>
+
+    <!-- SLIDE 7: KEANDALAN SISTEM -->
+    <div class="slide">
+      <div class="slide-header">
+        <h2><i class="fa-solid fa-shield-cat"></i> Keandalan & Robustness System</h2>
+        <span class="slide-tag">FITUR ANDALAN</span>
+      </div>
+      <div class="slide-body grid-2">
+        <div class="feature-card">
+          <h3><i class="fa-solid fa-arrows-split-up-and-left"></i> Tiered Property Fallback Query</h3>
+          <p>Menangani variasi kunci properti PubChem (<code>XLogP</code> vs <code>XLogP3</code>) secara dinamis untuk mencegah error HTTP 400 Bad Request pada senyawa obat mana pun.</p>
+        </div>
+        <div class="feature-card">
+          <h3><i class="fa-solid fa-box-archive"></i> Offline Dataset Cache</h3>
+          <p>Memiliki penampung data pra-cache lokal untuk 9+ senyawa obat preset utama, menjamin aplikasi tetap berjalan 100% lancar meski tanpa koneksi internet.</p>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>PharmaPulse 3D - Presentasi Akademis</span>
+        <span>Slide 7 dari 8</span>
+      </div>
+    </div>
+
+    <!-- SLIDE 8: KESIMPULAN & PENUTUP -->
+    <div class="slide">
+      <div class="slide-header">
+        <h2><i class="fa-solid fa-flag-checkered"></i> Kesimpulan & Repositori Project</h2>
+        <span class="slide-tag">PENUTUP</span>
+      </div>
+      <div class="slide-body title-slide-content">
+        <h3 style="font-size: 24px; color: var(--primary);">PharmaPulse 3D Siap Digunakan</h3>
+        <p style="font-size: 15px; color: var(--text-muted); max-width: 700px;">
+          Aplikasi ini berhasil menggabungkan integrasi basis data molekul ilmiah PubChem secara real-time, visualisasi spatial 3D, dan komputasi QSAR Lipinski ke dalam antarmuka web interaktif yang modern.
+        </p>
+        <div style="margin-top: 15px; background: rgba(255,255,255,0.04); padding: 16px 28px; border-radius: 12px; border: 1px solid var(--border-color);">
+          <i class="fa-brands fa-github" style="font-size: 24px; margin-right: 10px; color: var(--text-main);"></i>
+          <strong>GitHub Repository:</strong> <a href="https://github.com/novarani1511/pharmapulse-3d" style="color: var(--primary); text-decoration: none;">https://github.com/novarani1511/pharmapulse-3d</a>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>Terima Kasih atas Perhatian Anda</span>
+        <span>Slide 8 dari 8</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Navigation Bar Bottom -->
+  <div class="nav-controls">
+    <button class="nav-btn" id="prev-btn" title="Slide Sebelumnya"><i class="fa-solid fa-chevron-left"></i></button>
+    <span class="slide-counter" id="slide-counter">1 / 8</span>
+    <button class="nav-btn" id="next-btn" title="Slide Selanjutnya"><i class="fa-solid fa-chevron-right"></i></button>
+  </div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const slideCounter = document.getElementById('slide-counter');
+    let currentIndex = 0;
+
+    function updateSlides() {
+      slides.forEach((slide, idx) => {
+        if (idx === currentIndex) {
+          slide.classList.add('active');
+        } else {
+          slide.classList.remove('active');
+        }
+      });
+      slideCounter.textContent = `${currentIndex + 1} / ${slides.length}`;
+    }
+
+    prevBtn.addEventListener('click', () => {
+      if (currentIndex > 0) {
+        currentIndex--;
+        updateSlides();
+      }
+    });
+
+    nextBtn.addEventListener('click', () => {
+      if (currentIndex < slides.length - 1) {
+        currentIndex++;
+        updateSlides();
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        if (currentIndex < slides.length - 1) {
+          currentIndex++;
+          updateSlides();
+        }
+      } else if (e.key === 'ArrowLeft') {
+        if (currentIndex > 0) {
+          currentIndex--;
+          updateSlides();
+        }
+      }
+    });
+  </script>
+</body>
+</html>
