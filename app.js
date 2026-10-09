@@ -85,9 +85,19 @@ function setupEventListeners() {
       const activePane = document.getElementById(targetTab);
       if (activePane) activePane.classList.add('active');
 
-      // Refresh 3D viewer size when tab becomes visible
+      // Refresh 3D viewer size & charts when tab becomes visible
       if (targetTab === 'tab-3d-overview' && viewer3D) {
         setTimeout(() => viewer3D.resize(), 100);
+      } else if (targetTab === 'tab-qsar-chembl' && currentCompoundData) {
+        setTimeout(() => renderQSARChEMBLModule(currentCompoundData.props), 50);
+      } else if (targetTab === 'tab-admet-bcs' && currentCompoundData) {
+        setTimeout(() => renderSwissADMERadar(currentCompoundData.props), 50);
+      } else if (targetTab === 'tab-batch-csv') {
+        const tbody = document.getElementById('batch-table-body');
+        if (tbody && tbody.children.length === 0) {
+          const btnDemo = document.getElementById('btn-run-batch-preset');
+          btnDemo?.click();
+        }
       }
     });
   });
