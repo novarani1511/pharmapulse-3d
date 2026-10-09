@@ -771,6 +771,44 @@ const PRESET_FALLBACK_DATA = {
       Complexity: 198,
       Charge: 0
     }
+  },
+  'gingerol': {
+    cid: 442793,
+    props: {
+      Title: 'Gingerol',
+      MolecularWeight: '294.39',
+      MolecularFormula: 'C17H26O4',
+      CanonicalSMILES: 'CCCCCC(O)CC(=O)CCC1=CC(=C(C=C1)O)OC',
+      InChIKey: 'TWNYWBDKWYTVPO-UHFFFAOYSA-N',
+      IUPACName: '(5S)-5-hydroxy-1-(4-hydroxy-3-methoxyphenyl)decan-3-one',
+      XLogP: 3.1,
+      TPSA: 66.8,
+      HBondDonorCount: 2,
+      HBondAcceptorCount: 4,
+      RotatableBondCount: 10,
+      HeavyAtomCount: 21,
+      Complexity: 288,
+      Charge: 0
+    }
+  },
+  '6-gingerol': {
+    cid: 442793,
+    props: {
+      Title: '6-Gingerol',
+      MolecularWeight: '294.39',
+      MolecularFormula: 'C17H26O4',
+      CanonicalSMILES: 'CCCCCC(O)CC(=O)CCC1=CC(=C(C=C1)O)OC',
+      InChIKey: 'TWNYWBDKWYTVPO-UHFFFAOYSA-N',
+      IUPACName: '(5S)-5-hydroxy-1-(4-hydroxy-3-methoxyphenyl)decan-3-one',
+      XLogP: 3.1,
+      TPSA: 66.8,
+      HBondDonorCount: 2,
+      HBondAcceptorCount: 4,
+      RotatableBondCount: 10,
+      HeavyAtomCount: 21,
+      Complexity: 288,
+      Charge: 0
+    }
   }
 };
 
@@ -1262,7 +1300,7 @@ function setupBatchCSVEvents() {
       'Peramivir', 'Baloxavir', 'Valacyclovir', 'Famciclovir',
       'Lamivudine', 'Tenofovir', 'Sofosbuvir', 'Interferon',
       'Zidovudine', 'Efavirenz', 'Sitagliptin', 'Vinblastine',
-      'Vincristine', 'Quinine', 'Curcumin', 'Flavonoid', 'Tannin'
+      'Vincristine', 'Quinine', 'Curcumin', 'Flavonoid', 'Tannin', 'Gingerol'
     ].join('\n');
     if (textInput) textInput.value = demoList;
     runBatchScreening(demoList);
