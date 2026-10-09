@@ -638,6 +638,139 @@ const PRESET_FALLBACK_DATA = {
       Complexity: 549,
       Charge: 0
     }
+  },
+  'sitagliptin': {
+    cid: 4369359,
+    props: {
+      Title: 'Sitagliptin',
+      MolecularWeight: '407.31',
+      MolecularFormula: 'C16H15F6N5O',
+      CanonicalSMILES: 'C1C2=C(C=C(C=C2)F)CC(C1)N=C(CC3=CC(=NN3)C(F)(F)F)N',
+      InChIKey: 'MWOXKDUWHGGGED-UHFFFAOYSA-N',
+      IUPACName: '(3R)-3-amino-1-[3-(trifluoromethyl)-5,6-dihydro-[1,2,4]triazolo[4,3-a]pyrazinate-7-yl]-4-(2,4,5-trifluorophenyl)butan-1-one',
+      XLogP: 1.5,
+      TPSA: 77.0,
+      HBondDonorCount: 1,
+      HBondAcceptorCount: 10,
+      RotatableBondCount: 5,
+      HeavyAtomCount: 28,
+      Complexity: 610,
+      Charge: 0
+    }
+  },
+  'vinblastine': {
+    cid: 241903,
+    props: {
+      Title: 'Vinblastine',
+      MolecularWeight: '810.97',
+      MolecularFormula: 'C46H58N4O9',
+      CanonicalSMILES: 'CCC1(CC2CC(C3=C(N21)C4=CC=CC=C4N3)(C5=C(C=C6C(=C5)C78C9C1(CC7N(C6=O)C)C=CCC1N8CC9(C(=O)OC)O)OC)C(=O)OC)O',
+      InChIKey: 'LGGYENKIRAKMBE-UHFFFAOYSA-N',
+      IUPACName: 'methyl (1R,9R,10S,11R,12R,19R)-11-acetyloxy-12-ethyl-4-[(13S,15S,17S)-17-ethyl-17-hydroxy-13-(methoxycarbonyl)-1,11-diazatetracyclo[13.3.1.04,12.05,10]nonadeca-4,6,12-trien-13-yl]-8-hydroxy-5-methoxy-6-methyl-3,13-diazatentacyclo-hexadeca-4,6-dien-10-carboxylate',
+      XLogP: 3.8,
+      TPSA: 144.0,
+      HBondDonorCount: 2,
+      HBondAcceptorCount: 11,
+      RotatableBondCount: 7,
+      HeavyAtomCount: 59,
+      Complexity: 1780,
+      Charge: 0
+    }
+  },
+  'vincristine': {
+    cid: 5978,
+    props: {
+      Title: 'Vincristine',
+      MolecularWeight: '824.95',
+      MolecularFormula: 'C46H56N4O10',
+      CanonicalSMILES: 'CCC1(CC2CC(C3=C(N21)C4=CC=CC=C4N3)(C5=C(C=C6C(=C5)C78C9C1(CC7N(C6=O)C=O)C=CCC1N8CC9(C(=O)OC)O)OC)C(=O)OC)O',
+      InChIKey: 'ROVGAARDSGGHG-UHFFFAOYSA-N',
+      IUPACName: 'methyl (1R,9R,10S,11R,12R,19R)-11-acetyloxy-12-ethyl-4-[(13S,15S,17S)-17-ethyl-17-hydroxy-13-(methoxycarbonyl)-1,11-diazatetracyclo-nonadeca-4,6,12-trien-13-yl]-6-formyl-8-hydroxy-5-methoxy-3,13-diazatentacyclo-hexadeca-4,6-dien-10-carboxylate',
+      XLogP: 3.5,
+      TPSA: 161.0,
+      HBondDonorCount: 2,
+      HBondAcceptorCount: 12,
+      RotatableBondCount: 7,
+      HeavyAtomCount: 60,
+      Complexity: 1840,
+      Charge: 0
+    }
+  },
+  'quinine': {
+    cid: 3034034,
+    props: {
+      Title: 'Quinine',
+      MolecularWeight: '324.42',
+      MolecularFormula: 'C20H24N2O2',
+      CanonicalSMILES: 'COC1=CC2=C(C=C1)N=CC=C2C(C3CC4CCN3CC4C=C)O',
+      InChIKey: 'LOZUGNYEBDGGCS-UHFFFAOYSA-N',
+      IUPACName: '(R)-(6-methoxyquinolin-4-yl)[(2S,4S,5R)-5-vinylquinuclidin-2-yl]methanol',
+      XLogP: 3.4,
+      TPSA: 45.6,
+      HBondDonorCount: 1,
+      HBondAcceptorCount: 4,
+      RotatableBondCount: 3,
+      HeavyAtomCount: 24,
+      Complexity: 472,
+      Charge: 0
+    }
+  },
+  'curcumin': {
+    cid: 5281767,
+    props: {
+      Title: 'Curcumin',
+      MolecularWeight: '368.38',
+      MolecularFormula: 'C21H20O6',
+      CanonicalSMILES: 'COC1=C(C=CC(=C1)C=CC(=O)CC(=O)C=CC2=CC(=C(C=C2)O)OC)O',
+      InChIKey: 'VFLTYZCEXSLHJW-UHFFFAOYSA-N',
+      IUPACName: '(1E,6E)-1,7-bis(4-hydroxy-3-methoxyphenyl)hepta-1,6-diene-3,5-dione',
+      XLogP: 3.2,
+      TPSA: 93.1,
+      HBondDonorCount: 2,
+      HBondAcceptorCount: 6,
+      RotatableBondCount: 8,
+      HeavyAtomCount: 27,
+      Complexity: 542,
+      Charge: 0
+    }
+  },
+  'flavonoid': {
+    cid: 5280343,
+    props: {
+      Title: 'Flavonoid (Quercetin)',
+      MolecularWeight: '302.24',
+      MolecularFormula: 'C15H10O7',
+      CanonicalSMILES: 'C1=CC(=C(C=C1C2=C(C(=O)C3=C(C=C(C=C3O2)O)O)O)O)O',
+      InChIKey: 'REFJWIPBBBDIPP-UHFFFAOYSA-N',
+      IUPACName: '2-(3,4-dihydroxy-phenyl)-3,5,7-trihydroxychromen-4-one',
+      XLogP: 1.5,
+      TPSA: 127.0,
+      HBondDonorCount: 5,
+      HBondAcceptorCount: 7,
+      RotatableBondCount: 1,
+      HeavyAtomCount: 22,
+      Complexity: 512,
+      Charge: 0
+    }
+  },
+  'tannin': {
+    cid: 370,
+    props: {
+      Title: 'Tannin (Gallic Acid)',
+      MolecularWeight: '170.12',
+      MolecularFormula: 'C7H6O5',
+      CanonicalSMILES: 'C1=C(C=C(C(=C1O)O)O)C(=O)O',
+      InChIKey: 'TANNIC-ACID-GALLIC-UNIT',
+      IUPACName: '3,4,5-trihydroxybenzoic acid (Tannic acid core)',
+      XLogP: 0.7,
+      TPSA: 97.9,
+      HBondDonorCount: 4,
+      HBondAcceptorCount: 5,
+      RotatableBondCount: 1,
+      HeavyAtomCount: 12,
+      Complexity: 198,
+      Charge: 0
+    }
   }
 };
 
@@ -1128,7 +1261,8 @@ function setupBatchCSVEvents() {
       'Estradiol', 'Oseltamivir', 'Acyclovir', 'Zanamivir',
       'Peramivir', 'Baloxavir', 'Valacyclovir', 'Famciclovir',
       'Lamivudine', 'Tenofovir', 'Sofosbuvir', 'Interferon',
-      'Zidovudine', 'Efavirenz'
+      'Zidovudine', 'Efavirenz', 'Sitagliptin', 'Vinblastine',
+      'Vincristine', 'Quinine', 'Curcumin', 'Flavonoid', 'Tannin'
     ].join('\n');
     if (textInput) textInput.value = demoList;
     runBatchScreening(demoList);
