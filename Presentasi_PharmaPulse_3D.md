@@ -66,19 +66,19 @@ Aplikasi Berbasis Web untuk Penapisan Kelayakan Obat (*Druglikeness*), Evaluasi 
 
 ---
 
-# 🧪 5. Studi Kasus Pengujian Obat
+# 🧪 5. Studi Kasus Isoflavon Kedelai (Phytoestrogen)
 
-* 🟢 **Paracetamol (CID 1983):**  
-  MW: 151.16 | LogP: 0.5 | HBD: 2 | HBA: 2  
-  **Skor RO5: 4/4 (Memenuhi - Ideal Oral)**
+* 🟢 **Genistein (CID 5280961):**  
+  MW: 270.24 g/mol | LogP: 2.7 | HBD: 3 | HBA: 5 | TPSA: 87.0 Å²  
+  **Skor RO5: 4/4 (Lolos 100% Ideal Absorpsi Oral)**
 
-* 🟡 **Atorvastatin (CID 60823):**  
-  MW: 558.64 | LogP: 5.7 | HBD: 4 | HBA: 7  
-  **Skor RO5: 2/4 (Peringatan - Melanggar MW & LogP)**
+* 🟢 **Daidzein (CID 5281708):**  
+  MW: 254.24 g/mol | LogP: 2.5 | HBD: 2 | HBA: 4 | TPSA: 66.8 Å²  
+  **Skor RO5: 4/4 (Lolos - Prekursor Metabolit Equol)**
 
-* 🟢 **Amoxicillin (CID 33613):**  
-  MW: 365.40 | LogP: -2.0 | HBD: 4 | HBA: 6  
-  **Skor RO5: 4/4 (Memenuhi - Antibiotik Oral)**
+* 🟢 **Glycitein (CID 5317750):**  
+  MW: 284.26 g/mol | LogP: 2.4 | HBD: 2 | HBA: 5 | TPSA: 76.0 Å²  
+  **Skor RO5: 4/4 (Lolos - Metoksidisoflavon Alami)**
 
 ---
 

@@ -305,6 +305,63 @@ const PRESET_FALLBACK_DATA = {
       Complexity: 293,
       Charge: 0
     }
+  },
+  'genistein': {
+    cid: 5280961,
+    props: {
+      Title: 'Genistein',
+      MolecularWeight: '270.24',
+      MolecularFormula: 'C15H10O5',
+      CanonicalSMILES: 'C1=CC(=CC=C1C2=COC3=CC(=CC(=C3C2=O)O)O)O',
+      InChIKey: 'TZBJGXHYKVUXJN-UHFFFAOYSA-N',
+      IUPACName: '5,7-dihydroxy-3-(4-hydroxyphenyl)chromen-4-one',
+      XLogP: 2.7,
+      TPSA: 87.0,
+      HBondDonorCount: 3,
+      HBondAcceptorCount: 5,
+      RotatableBondCount: 1,
+      HeavyAtomCount: 20,
+      Complexity: 410,
+      Charge: 0
+    }
+  },
+  'daidzein': {
+    cid: 5281708,
+    props: {
+      Title: 'Daidzein',
+      MolecularWeight: '254.24',
+      MolecularFormula: 'C15H10O4',
+      CanonicalSMILES: 'C1=CC(=CC=C1C2=COC3=C(C2=O)C=CC(=C3)O)O',
+      InChIKey: 'ZQSIJRDFPHDXIC-UHFFFAOYSA-N',
+      IUPACName: '7-hydroxy-3-(4-hydroxyphenyl)chromen-4-one',
+      XLogP: 2.5,
+      TPSA: 66.8,
+      HBondDonorCount: 2,
+      HBondAcceptorCount: 4,
+      RotatableBondCount: 1,
+      HeavyAtomCount: 19,
+      Complexity: 382,
+      Charge: 0
+    }
+  },
+  'glycitein': {
+    cid: 5317750,
+    props: {
+      Title: 'Glycitein',
+      MolecularWeight: '284.26',
+      MolecularFormula: 'C16H12O5',
+      CanonicalSMILES: 'COC1=C(C=C2C(=C1)C(=O)C(=CO2)C3=CC=C(C=C3)O)O',
+      InChIKey: 'DXYUAIFZCFRPTH-UHFFFAOYSA-N',
+      IUPACName: '7-hydroxy-3-(4-hydroxyphenyl)-6-methoxychromen-4-one',
+      XLogP: 2.4,
+      TPSA: 76.0,
+      HBondDonorCount: 2,
+      HBondAcceptorCount: 5,
+      RotatableBondCount: 2,
+      HeavyAtomCount: 21,
+      Complexity: 424,
+      Charge: 0
+    }
   }
 };
 
