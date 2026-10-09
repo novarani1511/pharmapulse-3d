@@ -372,6 +372,272 @@ const PRESET_FALLBACK_DATA = {
       Complexity: 424,
       Charge: 0
     }
+  },
+  'estradiol': {
+    cid: 5757,
+    props: {
+      Title: 'Estradiol',
+      MolecularWeight: '272.38',
+      MolecularFormula: 'C18H24O2',
+      CanonicalSMILES: 'CC12CCC3C(C1CCC2O)CCC4=C3C=CC(=C4)O',
+      InChIKey: 'VOVUFAWAGUJLGD-UHFFFAOYSA-N',
+      IUPACName: '(17beta)-estra-1,3,5(10)-triene-3,17-diol',
+      XLogP: 4.0,
+      TPSA: 40.5,
+      HBondDonorCount: 2,
+      HBondAcceptorCount: 2,
+      RotatableBondCount: 0,
+      HeavyAtomCount: 20,
+      Complexity: 457,
+      Charge: 0
+    }
+  },
+  'oseltamivir': {
+    cid: 65028,
+    props: {
+      Title: 'Oseltamivir',
+      MolecularWeight: '312.4',
+      MolecularFormula: 'C16H28N2O4',
+      CanonicalSMILES: 'CCC(CC)OC1C=C(CC(C1NC(=O)C)N)C(=O)OCC',
+      InChIKey: 'NWIUTBDWLVIJLE-UHFFFAOYSA-N',
+      IUPACName: 'ethyl (3R,4R,5S)-4-acetamido-5-amino-3-pentan-3-yloxycyclohexene-1-carboxylate',
+      XLogP: 1.1,
+      TPSA: 91.8,
+      HBondDonorCount: 2,
+      HBondAcceptorCount: 5,
+      RotatableBondCount: 8,
+      HeavyAtomCount: 22,
+      Complexity: 432,
+      Charge: 0
+    }
+  },
+  'acyclovir': {
+    cid: 2022,
+    props: {
+      Title: 'Acyclovir',
+      MolecularWeight: '225.21',
+      MolecularFormula: 'C8H11N5O3',
+      CanonicalSMILES: 'C1=NC2=C(N1COCCO)N=C(NC2=O)N',
+      InChIKey: 'MKUXAQCKUSMCKH-UHFFFAOYSA-N',
+      IUPACName: '2-amino-9-(2-hydroxyethoxymethyl)-3H-purin-6-one',
+      XLogP: -1.6,
+      TPSA: 117.0,
+      HBondDonorCount: 3,
+      HBondAcceptorCount: 6,
+      RotatableBondCount: 4,
+      HeavyAtomCount: 16,
+      Complexity: 301,
+      Charge: 0
+    }
+  },
+  'zanamivir': {
+    cid: 5085,
+    props: {
+      Title: 'Zanamivir',
+      MolecularWeight: '332.31',
+      MolecularFormula: 'C12H20N4O7',
+      CanonicalSMILES: 'CC(=O)NC1C(C=C(OC1C(C(CO)O)O)C(=O)O)N=C(N)N',
+      InChIKey: 'GZLGWPAIUVIWOC-UHFFFAOYSA-N',
+      IUPACName: '(2R,3R,4S)-4-guanidino-3-acetamido-2-((1R,2R)-1,2,3-trihydroxypropyl)-3,4-dihydro-2H-pyran-6-carboxylic acid',
+      XLogP: -4.3,
+      TPSA: 202.0,
+      HBondDonorCount: 7,
+      HBondAcceptorCount: 8,
+      RotatableBondCount: 6,
+      HeavyAtomCount: 23,
+      Complexity: 504,
+      Charge: 0
+    }
+  },
+  'peramivir': {
+    cid: 154237,
+    props: {
+      Title: 'Peramivir',
+      MolecularWeight: '328.4',
+      MolecularFormula: 'C15H28N4O4',
+      CanonicalSMILES: 'CCC(CC)C1CC(C(C1NC(=O)C)N=C(N)N)C(=O)O',
+      InChIKey: 'GMWWVTQWLGGKRF-UHFFFAOYSA-N',
+      IUPACName: '(1S,2S,3S,4R)-3-[(1S)-1-acetamido-2-ethylbutyl]-4-(diaminomethylideneamino)-2-hydroxycyclopentane-1-carboxylic acid',
+      XLogP: -1.2,
+      TPSA: 147.0,
+      HBondDonorCount: 5,
+      HBondAcceptorCount: 5,
+      RotatableBondCount: 7,
+      HeavyAtomCount: 23,
+      Complexity: 461,
+      Charge: 0
+    }
+  },
+  'baloxavir': {
+    cid: 121404104,
+    props: {
+      Title: 'Baloxavir',
+      MolecularWeight: '483.5',
+      MolecularFormula: 'C24H19F2N3O3S',
+      CanonicalSMILES: 'CC1C2=C(C=CC=C2)SC3=C1N4C(=O)C5=C(C(=O)C(=CN5C4=O)O)N6C3=CC=CC=C6F',
+      InChIKey: 'HQJCFEPZUNXBRK-UHFFFAOYSA-N',
+      IUPACName: 'Baloxavir acid',
+      XLogP: 2.6,
+      TPSA: 95.8,
+      HBondDonorCount: 1,
+      HBondAcceptorCount: 7,
+      RotatableBondCount: 1,
+      HeavyAtomCount: 34,
+      Complexity: 920,
+      Charge: 0
+    }
+  },
+  'valacyclovir': {
+    cid: 60813,
+    props: {
+      Title: 'Valacyclovir',
+      MolecularWeight: '324.34',
+      MolecularFormula: 'C13H20N6O4',
+      CanonicalSMILES: 'CC(C)C(C(=O)OCCOCN1C=NC2=C1N=C(NC2=O)N)N',
+      InChIKey: 'RLLVWWGGQBGRSY-UHFFFAOYSA-N',
+      IUPACName: '2-[(2-amino-6-oxo-3H-purin-9-yl)methoxy]ethyl (2S)-2-amino-3-methylbutanoate',
+      XLogP: -1.0,
+      TPSA: 146.0,
+      HBondDonorCount: 4,
+      HBondAcceptorCount: 8,
+      RotatableBondCount: 8,
+      HeavyAtomCount: 23,
+      Complexity: 452,
+      Charge: 0
+    }
+  },
+  'famciclovir': {
+    cid: 3324,
+    props: {
+      Title: 'Famciclovir',
+      MolecularWeight: '321.33',
+      MolecularFormula: 'C14H19N5O4',
+      CanonicalSMILES: 'CC(=O)OCC(CCN1C=NC2=C1N=CH N=C2)COC(=O)C',
+      InChIKey: 'VDZPRWUWFWXFAC-UHFFFAOYSA-N',
+      IUPACName: '[2-(6-aminopurin-9-yl)ethyl]propane-1,3-diyl diacetate',
+      XLogP: 0.8,
+      TPSA: 104.0,
+      HBondDonorCount: 0,
+      HBondAcceptorCount: 8,
+      RotatableBondCount: 7,
+      HeavyAtomCount: 23,
+      Complexity: 421,
+      Charge: 0
+    }
+  },
+  'lamivudine': {
+    cid: 60825,
+    props: {
+      Title: 'Lamivudine',
+      MolecularWeight: '229.26',
+      MolecularFormula: 'C8H11N3O3S',
+      CanonicalSMILES: 'C1C(OC(S1)CO)N2C=CC(=NC2=O)N',
+      InChIKey: 'JAKSTIMTLWKBKG-UHFFFAOYSA-N',
+      IUPACName: '4-amino-1-[(2R,5S)-2-(hydroxymethyl)-1,3-oxathiolan-5-yl]pyrimidin-2-one',
+      XLogP: -0.9,
+      TPSA: 101.0,
+      HBondDonorCount: 2,
+      HBondAcceptorCount: 5,
+      RotatableBondCount: 2,
+      HeavyAtomCount: 15,
+      Complexity: 322,
+      Charge: 0
+    }
+  },
+  'tenofovir': {
+    cid: 464205,
+    props: {
+      Title: 'Tenofovir',
+      MolecularWeight: '287.21',
+      MolecularFormula: 'C9H14N5O4P',
+      CanonicalSMILES: 'CC(CN1C=NC2=C1N=C(N)N=C2)OCP(=O)(O)O',
+      InChIKey: 'RILRKIJVOYVOMW-UHFFFAOYSA-N',
+      IUPACName: '[(2R)-1-(6-aminopurin-9-yl)propan-2-yl]oxymethylphosphonic acid',
+      XLogP: -1.5,
+      TPSA: 139.0,
+      HBondDonorCount: 3,
+      HBondAcceptorCount: 7,
+      RotatableBondCount: 5,
+      HeavyAtomCount: 19,
+      Complexity: 425,
+      Charge: 0
+    }
+  },
+  'sofosbuvir': {
+    cid: 45375808,
+    props: {
+      Title: 'Sofosbuvir',
+      MolecularWeight: '529.45',
+      MolecularFormula: 'C22H29FN3O9P',
+      CanonicalSMILES: 'CC(C)OC(=O)C(C)NP(=O)(OCC1C(C(C(O1)N2C=CC(=O)NC2=O)(C)F)O)OC3=CC=CC=C3',
+      InChIKey: 'PCDYPRRSVWKZN-UHFFFAOYSA-N',
+      IUPACName: 'propan-2-yl (2S)-2-[[[(2R,3R,4R,5R)-5-(2,4-dioxopyrimidin-1-yl)-4-fluoro-3-hydroxy-4-methyloxolan-2-yl]methoxy-phenoxyphosphoryl]amino]propanoate',
+      XLogP: 1.6,
+      TPSA: 167.0,
+      HBondDonorCount: 3,
+      HBondAcceptorCount: 11,
+      RotatableBondCount: 9,
+      HeavyAtomCount: 36,
+      Complexity: 968,
+      Charge: 0
+    }
+  },
+  'interferon': {
+    cid: 16132338,
+    props: {
+      Title: 'Interferon',
+      MolecularWeight: '19271.0',
+      MolecularFormula: 'C860H1353N229O255S9',
+      CanonicalSMILES: 'N/A',
+      InChIKey: 'INTERFERON-ALFA-2B',
+      IUPACName: 'Human Interferon alfa-2b (Biologic Protein)',
+      XLogP: 0.0,
+      TPSA: 250.0,
+      HBondDonorCount: 50,
+      HBondAcceptorCount: 80,
+      RotatableBondCount: 30,
+      HeavyAtomCount: 1000,
+      Complexity: 5000,
+      Charge: 0
+    }
+  },
+  'zidovudine': {
+    cid: 35370,
+    props: {
+      Title: 'Zidovudine',
+      MolecularWeight: '267.24',
+      MolecularFormula: 'C10H13N5O4',
+      CanonicalSMILES: 'CC1=CN(C(=O)NC1=O)C2CC(C(O2)CO)N=[N+]=[N-]',
+      InChIKey: 'BAZNRVBAZXWJSP-UHFFFAOYSA-N',
+      IUPACName: '1-[(2R,4S,5S)-4-azido-5-(hydroxymethyl)oxolan-2-yl]-5-methylpyrimidine-2,4-dione',
+      XLogP: 0.05,
+      TPSA: 106.0,
+      HBondDonorCount: 2,
+      HBondAcceptorCount: 7,
+      RotatableBondCount: 3,
+      HeavyAtomCount: 19,
+      Complexity: 458,
+      Charge: 0
+    }
+  },
+  'efavirenz': {
+    cid: 64139,
+    props: {
+      Title: 'Efavirenz',
+      MolecularWeight: '315.67',
+      MolecularFormula: 'C14H9ClF3NO2',
+      CanonicalSMILES: 'C1CC1C#CC2(C3=C(C=CC(=C3)Cl)NC(=O)O2)C(F)(F)F',
+      InChIKey: 'LUXGAVPVOZOMKL-UHFFFAOYSA-N',
+      IUPACName: '(4S)-6-chloro-4-(2-cyclopropylethynyl)-4-(trifluoromethyl)-1H-3,1-benzoxazin-2-one',
+      XLogP: 4.6,
+      TPSA: 38.3,
+      HBondDonorCount: 1,
+      HBondAcceptorCount: 3,
+      RotatableBondCount: 1,
+      HeavyAtomCount: 21,
+      Complexity: 549,
+      Charge: 0
+    }
   }
 };
 
@@ -858,7 +1124,11 @@ function setupBatchCSVEvents() {
     const demoList = [
       'Paracetamol', 'Aspirin', 'Ibuprofen', 'Atorvastatin',
       'Amoxicillin', 'Ciprofloxacin', 'Artemisinin', 'Remdesivir',
-      'Caffeine', 'Genistein', 'Daidzein', 'Glycitein'
+      'Caffeine', 'Genistein', 'Daidzein', 'Glycitein',
+      'Estradiol', 'Oseltamivir', 'Acyclovir', 'Zanamivir',
+      'Peramivir', 'Baloxavir', 'Valacyclovir', 'Famciclovir',
+      'Lamivudine', 'Tenofovir', 'Sofosbuvir', 'Interferon',
+      'Zidovudine', 'Efavirenz'
     ].join('\n');
     if (textInput) textInput.value = demoList;
     runBatchScreening(demoList);
