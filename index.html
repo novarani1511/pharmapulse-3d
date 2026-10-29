@@ -18,7 +18,7 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <!-- 3Dmol.js for 3D Molecular rendering -->
-  <script src="https://3dmol.org/build/3Dmol-min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/3Dmol/2.0.4/3Dmol-min.js"></script>
 
   <!-- Styles -->
   <link rel="stylesheet" href="styles.css">
@@ -27,7 +27,7 @@
   <div class="app-container">
     
     <!-- Top Navigation Header -->
-    <header class="app-header">
+        <header class="app-header">
       <div class="logo-group">
         <div class="logo-icon">
           <i class="fa-solid fa-atom"></i>
@@ -43,6 +43,9 @@
         </span>
         <button id="btn-compare-mode" class="btn btn-secondary">
           <i class="fa-solid fa-columns"></i> Mode Komparasi Objek
+        </button>
+                <button id="btn-open-notebook" class="btn btn-secondary" title="Buka Lab Research Notebook & Riwayat Proyek">
+          <i class="fa-solid fa-book-bookmark"></i> Lab Notebook (<span id="notebook-badge-count">0</span>)
         </button>
         <button id="btn-export-pdf" class="btn btn-primary">
           <i class="fa-solid fa-file-export"></i> Cetak Laporan
@@ -130,6 +133,9 @@
               <span id="logp-tag" class="tag"><i class="fa-solid fa-droplet"></i> LogP: 5.7</span>
               <span id="tpsa-tag" class="tag"><i class="fa-solid fa-layer-group"></i> TPSA: 111.53 Å²</span>
             </div>
+                      <button id="btn-save-compound-notebook" class="btn btn-sm btn-outline" style="margin-top: 10px; margin-left: 0;">
+              <i class="fa-solid fa-bookmark"></i> Simpan ke Lab Notebook
+            </button>
           </div>
           <div class="druglikeness-verdict-card" id="verdict-card">
             <div class="verdict-score-ring">
@@ -148,20 +154,29 @@
           <button class="tab-btn active" data-tab="tab-3d-overview">
             <i class="fa-solid fa-cube"></i> Visualisasi 3D & 2D
           </button>
+          <button class="tab-btn" data-tab="tab-pdb-target">
+            <i class="fa-solid fa-dna"></i> Kompleks Target PDB 3D
+          </button>
+          <button class="tab-btn" data-tab="tab-sketcher">
+            <i class="fa-solid fa-pen-ruler"></i> 2D Sketcher & De Novo
+          </button>
           <button class="tab-btn" data-tab="tab-druglikeness">
-            <i class="fa-solid fa-shield-halved"></i> Evaluasi Lipinski & QSAR
+            <i class="fa-solid fa-shield-halved"></i> Evaluasi Lipinski & Bioisoster
           </button>
           <button class="tab-btn" data-tab="tab-qsar-chembl">
             <i class="fa-solid fa-chart-line"></i> Pemodelan QSAR (ChEMBL pIC50)
           </button>
           <button class="tab-btn" data-tab="tab-admet-bcs">
-            <i class="fa-solid fa-dna"></i> ADMET, PAINS & Ionisasi BCS
+            <i class="fa-solid fa-heart-pulse"></i> ADMET & Toksisitas Organ
           </button>
           <button class="tab-btn" data-tab="tab-descriptors">
             <i class="fa-solid fa-list-check"></i> Deskriptor Fisikokimia
           </button>
           <button class="tab-btn" data-tab="tab-safety">
-            <i class="fa-solid fa-triangle-exclamation"></i> Toksisitas & GHS Hazards
+            <i class="fa-solid fa-triangle-exclamation"></i> GHS & openFDA Signal
+          </button>
+          <button class="tab-btn" data-tab="tab-analogs">
+            <i class="fa-solid fa-code-branch"></i> Analog & Target Fishing
           </button>
           <button class="tab-btn" data-tab="tab-batch-csv">
             <i class="fa-solid fa-file-csv"></i> Saringan Batch CSV
@@ -187,7 +202,34 @@
                   <button id="btn-reset-view" class="btn-icon" title="Reset Camera"><i class="fa-solid fa-compress"></i></button>
                 </div>
               </div>
-              <div class="card-body viewer-body">
+              <div class="viewer-extra-toolbar">
+                  <button id="btn-toggle-ph4" class="cadd-tool-btn" title="Toggle 3D Pharmacophore Feature Overlay">
+                    <i class="fa-solid fa-bullseye"></i> Farmakofor 3D
+                  </button>
+                  <button id="btn-toggle-measure" class="cadd-tool-btn" title="Klik 2 atom berurutan untuk ukur jarak Angstrom">
+                    <i class="fa-solid fa-ruler-combined"></i> Ukur Jarak (Angstrom)
+                  </button>
+                                    <button id="btn-export-pdbqt" class="cadd-tool-btn" title="Unduh file PDBQT dengan muatan parsial untuk AutoDock Vina / PyRx">
+                    <i class="fa-solid fa-file-arrow-down"></i> Unduh .PDBQT (Docking)
+                  </button>
+                  <button id="btn-export-mol2" class="cadd-tool-btn" title="Unduh file Tripos MOL2">
+                    <i class="fa-solid fa-download"></i> .MOL2
+                  </button>
+                  <button id="btn-export-sdf" class="cadd-tool-btn" title="Unduh file SDF 3D Conformer">
+                    <i class="fa-solid fa-file-code"></i> .SDF 3D
+                  </button>
+                  <button id="btn-reset-measure" class="cadd-tool-btn" style="display:none;" title="Hapus Pengukuran">
+                    <i class="fa-solid fa-trash-can"></i> Reset
+                  </button>
+                  <span id="measure-mode-hint" style="display:none; font-size:11px; color:var(--color-primary); margin-left:auto;">
+                    <i class="fa-solid fa-hand-pointer"></i> Klik 2 atom di viewport 3D
+                  </span>
+                </div>
+                <div id="cadd-measure-badge" class="cadd-measurement-badge">
+                  <span class="measure-title"><i class="fa-solid fa-ruler"></i> Hasil Pengukuran 3D</span>
+                  <span id="measure-result-text" class="measure-val">-</span>
+                </div>
+                <div class="card-body viewer-body">
                 <div id="mol3d-viewport" class="mol3d-viewport"></div>
                 <div class="viewer-legend">
                   <span class="element-tag c-tag">C (Abu)</span>
@@ -342,6 +384,26 @@
               </div>
             </div>
 
+            <!-- AI Bioisosteric Replacement Assistant -->
+            <div class="card bioisostere-card" style="grid-column: 1 / -1; margin-top: 15px;">
+              <div class="card-header">
+                <div>
+                  <h3><i class="fa-solid fa-wand-magic-sparkles"></i> AI Bioisosteric Replacement Assistant</h3>
+                  <p class="card-desc">Rekomendasi substitusi gugus fungsi bioisosterik cerdas untuk mengatasi pelanggaran Lipinski, meningkatkan permeabilitas membran, dan memperpanjang waktu paruh.</p>
+                </div>
+                <span class="badge badge-accent"><i class="fa-solid fa-brain"></i> Medicinal Chemistry AI</span>
+              </div>
+              <div class="card-body">
+                <div class="bioisostere-intro">
+                  <i class="fa-solid fa-lightbulb"></i>
+                  <span id="bioisostere-summary-text">Menganalisis gugus fungsi molekul aktif untuk mencari peluang modifikasi struktural...</span>
+                </div>
+                <div id="bioisostere-cards-grid" class="bioisostere-grid">
+                  <!-- Dynamic Bioisosteric Suggestion Cards -->
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
 
@@ -451,6 +513,31 @@
           </div>
         </div>
 
+                    <!-- openFDA Real-World Pharmacovigilance Signals (FAERS) -->
+            <div class="card openfda-card" style="margin-top:20px;">
+              <div class="card-header">
+                <div>
+                  <h3><i class="fa-solid fa-hospital-user"></i> openFDA Real-World Pharmacovigilance Signals (FAERS)</h3>
+                  <p class="card-desc">Laporan kejadian tidak diinginkan (*Adverse Drug Reactions*) aktual dari basis data pengawasan pasca-pemasaran FDA Amerika Serikat.</p>
+                </div>
+                <span class="badge badge-accent" id="fda-total-cases-badge">Live openFDA API</span>
+              </div>
+              <div class="card-body">
+                <div id="openfda-loading" class="openfda-loader" style="display:none;">
+                  <i class="fa-solid fa-spinner fa-spin"></i> Menghubungi Server openFDA FAERS...
+                </div>
+                <div id="openfda-content" class="openfda-content">
+                  <div class="openfda-summary-banner" id="openfda-summary-banner">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span id="openfda-summary-text">Memuat sinyal klinis efek samping dari openFDA...</span>
+                  </div>
+                  <div class="openfda-reactions-list" id="openfda-reactions-list">
+                    <!-- Dynamic reaction bars -->
+                  </div>
+                </div>
+              </div>
+            </div>
+
         <!-- Tab 5: ChEMBL Real QSAR Modeling -->
         <div id="tab-qsar-chembl" class="tab-pane">
           <div class="card">
@@ -459,6 +546,8 @@
               <span class="info-tooltip" title="Pemodelan Regresi Linier Antara Deskriptor Fisikokimia (X) vs Bioaktivitas pIC50 (Y)">i</span>
             </div>
             <div class="card-body">
+              <!-- Live ChEMBL API Status Banner -->
+              
               <div class="qsar-overview-grid">
                 <div class="qsar-chart-box">
                   <h4 id="qsar-target-title">Plot Regresi QSAR: pIC50 vs XLogP (Target: Estrogen Receptor Alpha / HMG-CoA)</h4>
@@ -480,6 +569,74 @@
                   <div class="stat-mini-card">
                     <span class="d-label">InChIKey Mapping</span>
                     <span class="d-val code-font" id="qsar-inchikey" style="font-size: 11px;">-</span>
+                  </div>
+                </div>
+              </div>
+
+              
+              <!-- Interactive QSAR Bioactivity Prediction Calculator -->
+              <div class="qsar-calculator-container" style="margin-top: 24px; padding: 20px; background: rgba(15, 23, 42, 0.65); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.25);">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+                  <h4 style="margin:0; font-size:15px; display:flex; align-items:center; gap:8px; color:#f8fafc;">
+                    <i class="fa-solid fa-calculator" style="color:var(--color-primary);"></i>
+                    Kalkulator Prediksi Bioaktivitas QSAR Terapan (In Silico Screening)
+                  </h4>
+                  <span class="badge" id="qsar-calc-target-badge" style="background:rgba(59,130,246,0.2); color:#60a5fa; font-size:11px; padding:4px 12px; border-radius:20px; border:1px solid rgba(59,130,246,0.3);">
+                    Target: Spesifik Senyawa
+                  </span>
+                </div>
+                <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px; line-height:1.5;">
+                  Kalkulator ini memprediksi afinitas bioaktivitas (<span class="code-font" style="color:#60a5fa;">pIC50</span>, konsentrasi inhibisi <span class="code-font" style="color:#34d399;">IC50</span>, dan estimasi energi ikatan Gibbs <span class="code-font" style="color:#38bdf8;">&Delta;G</span>) secara kuantitatif berdasarkan parameter deskriptor molekul terpilih dan model regresi spesifik target biologis senyawa ini.
+                </p>
+
+                <div class="qsar-calc-inputs-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap:12px; margin-bottom:16px;">
+                  <div class="calc-field">
+                    <label style="font-size:11px; color:#94a3b8; display:block; margin-bottom:4px; font-weight:500;">LogP / Lipofilisitas</label>
+                    <input type="number" id="calc-input-logp" step="0.05" class="calc-input" style="width:100%; padding:8px 10px; background:rgba(0,0,0,0.35); border:1px solid rgba(255,255,255,0.12); border-radius:6px; color:#fff; font-family:'JetBrains Mono',monospace; font-size:13px;" />
+                  </div>
+                  <div class="calc-field">
+                    <label style="font-size:11px; color:#94a3b8; display:block; margin-bottom:4px; font-weight:500;">TPSA (&Aring;&sup2;)</label>
+                    <input type="number" id="calc-input-tpsa" step="0.5" class="calc-input" style="width:100%; padding:8px 10px; background:rgba(0,0,0,0.35); border:1px solid rgba(255,255,255,0.12); border-radius:6px; color:#fff; font-family:'JetBrains Mono',monospace; font-size:13px;" />
+                  </div>
+                  <div class="calc-field">
+                    <label style="font-size:11px; color:#94a3b8; display:block; margin-bottom:4px; font-weight:500;">Bobot Molekul (MW)</label>
+                    <input type="number" id="calc-input-mw" step="0.1" class="calc-input" style="width:100%; padding:8px 10px; background:rgba(0,0,0,0.35); border:1px solid rgba(255,255,255,0.12); border-radius:6px; color:#fff; font-family:'JetBrains Mono',monospace; font-size:13px;" />
+                  </div>
+                  <div class="calc-field">
+                    <label style="font-size:11px; color:#94a3b8; display:block; margin-bottom:4px; font-weight:500;">Donor Ikatan H (HBD)</label>
+                    <input type="number" id="calc-input-hbd" step="1" class="calc-input" style="width:100%; padding:8px 10px; background:rgba(0,0,0,0.35); border:1px solid rgba(255,255,255,0.12); border-radius:6px; color:#fff; font-family:'JetBrains Mono',monospace; font-size:13px;" />
+                  </div>
+                  <div class="calc-field">
+                    <label style="font-size:11px; color:#94a3b8; display:block; margin-bottom:4px; font-weight:500;">Akseptor Ikatan H (HBA)</label>
+                    <input type="number" id="calc-input-hba" step="1" class="calc-input" style="width:100%; padding:8px 10px; background:rgba(0,0,0,0.35); border:1px solid rgba(255,255,255,0.12); border-radius:6px; color:#fff; font-family:'JetBrains Mono',monospace; font-size:13px;" />
+                  </div>
+                </div>
+
+                <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:16px;">
+                  <button id="btn-recalc-qsar" class="btn btn-primary" style="padding:8px 18px; font-size:13px; font-weight:600; cursor:pointer;">
+                    <i class="fa-solid fa-play"></i> Hitung Bioaktivitas Senyawa Ini
+                  </button>
+                  <button id="btn-reset-qsar" class="btn btn-secondary" style="padding:8px 14px; font-size:13px; cursor:pointer;">
+                    <i class="fa-solid fa-rotate-left"></i> Reset ke Deskriptor Asli
+                  </button>
+                </div>
+
+                <div class="qsar-calc-results" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap:12px; background:rgba(0,0,0,0.35); padding:16px; border-radius:10px; border:1px solid rgba(255,255,255,0.06);">
+                  <div class="calc-res-box">
+                    <span style="font-size:11px; color:#94a3b8; display:block; margin-bottom:4px;">Prediksi Bioaktivitas (pIC50)</span>
+                    <span id="calc-res-pic50" style="font-size:22px; font-weight:700; color:#60a5fa; font-family:'JetBrains Mono',monospace;">-</span>
+                  </div>
+                  <div class="calc-res-box">
+                    <span style="font-size:11px; color:#94a3b8; display:block; margin-bottom:4px;">Konsentrasi Inhibisi (IC50)</span>
+                    <span id="calc-res-ic50" style="font-size:22px; font-weight:700; color:#34d399; font-family:'JetBrains Mono',monospace;">-</span>
+                  </div>
+                  <div class="calc-res-box">
+                    <span style="font-size:11px; color:#94a3b8; display:block; margin-bottom:4px;">Energi Bebas Gibbs (&Delta;G)</span>
+                    <span id="calc-res-deltag" style="font-size:22px; font-weight:700; color:#38bdf8; font-family:'JetBrains Mono',monospace;">-</span>
+                  </div>
+                  <div class="calc-res-box">
+                    <span style="font-size:11px; color:#94a3b8; display:block; margin-bottom:4px;">Klasifikasi Potensi</span>
+                    <span id="calc-res-potency" style="font-size:13px; font-weight:600; display:inline-block; padding:4px 10px; border-radius:6px; background:rgba(255,255,255,0.08); margin-top:3px;">-</span>
                   </div>
                 </div>
               </div>
@@ -576,10 +733,264 @@
               </div>
             </div>
 
+            <!-- BOILED-Egg Model Card (HIA & BBB Permeation) -->
+            <div class="card boiled-egg-card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-egg"></i> Model Prediksi BOILED-Egg (HIA & Sawar Darah Otak)</h3>
+                <span class="info-tooltip" title="Model Daina & Zoete: Pemetaan WLogP vs TPSA untuk penyerapan usus (White) dan penetrasi otak (Yolk)">i</span>
+              </div>
+              <div class="card-body">
+                <div class="boiled-egg-container">
+                  <div class="boiled-egg-canvas-wrapper">
+                    <canvas id="boiled-egg-canvas" width="380" height="280"></canvas>
+                  </div>
+                  <div class="boiled-egg-metrics">
+                    <div class="egg-metric-item">
+                      <span class="egg-label">Koordinat (WLogP, TPSA)</span>
+                      <span class="egg-val code-font" id="val-egg-coords" style="color:#38bdf8;">-</span>
+                    </div>
+                    <div class="egg-metric-item">
+                      <span class="egg-label">Absorpsi Gastrointestinal (HIA)</span>
+                      <span class="egg-val" id="val-egg-hia" style="color:var(--color-success);">TINGGI (Zona Putih)</span>
+                    </div>
+                    <div class="egg-metric-item">
+                      <span class="egg-label">Penetrasi Sawar Darah Otak (BBB)</span>
+                      <span class="egg-val" id="val-egg-bbb" style="color:var(--color-warning);">NON-PERMEANT</span>
+                    </div>
+                    <div class="egg-metric-item">
+                      <span class="egg-label">P-gp Efflux Substrat</span>
+                      <span class="egg-val" id="val-egg-pgp" style="color:var(--color-primary);">SUBSTRAT (PGP+)</span>
+                    </div>
+                    <div class="egg-metric-item" style="grid-column: 1 / -1; margin-top: 4px;">
+                      <span class="egg-label">Interpretasi Farmakokinetik Klinis</span>
+                      <span class="egg-val" id="val-egg-desc" style="font-size: 11px; font-weight: normal; color: #cbd5e1; line-height: 1.4;">-</span>
+                    </div>
+                  </div>
+                  <div class="egg-legend-row">
+                    <span class="egg-legend-chip"><span class="egg-dot dot-white"></span> Putih: Gastrointestinal (HIA)</span>
+                    <span class="egg-legend-chip"><span class="egg-dot dot-yolk"></span> Kuning: Sawar Darah Otak (BBB)</span>
+                    <span class="egg-legend-chip"><span class="egg-dot dot-target"></span> Titik: Posisi Senyawa Target</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Synthetic Accessibility & Lead-Likeness Card -->
+            <div class="card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-flask-vial"></i> Kemudahan Sintesis (SA Score) & Lead-Likeness</h3>
+              </div>
+              <div class="card-body">
+                <div class="sa-score-wrapper">
+                  <div class="sa-meter-container">
+                    <div class="sa-meter-circle" id="sa-circle-meter">
+                      <span class="sa-meter-val" id="val-sa-score">3.2</span>
+                      <span class="sa-meter-max">dari 10</span>
+                    </div>
+                    <div class="sa-details-box">
+                      <div class="sa-details-title" id="sa-level-title">Sintesis Sangat Mudah (High Feasibility)</div>
+                      <p class="sa-details-desc" id="sa-level-desc">Struktur memiliki kompleksitas rendah, pusat kiral minimal, dan bahan baku sintetis tersedia luas.</p>
+                      <div class="sa-bar-track">
+                        <div class="sa-bar-gradient" id="sa-progress-bar" style="width: 32%;"></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="filter-box" style="margin-top: 10px;">
+                    <div class="filter-top">
+                      <h4>Saringan Senyawa Penuntun (Lead-Likeness Teague/Oprea)</h4>
+                      <span class="badge" id="badge-lead-likeness">Drug-Like Lead</span>
+                    </div>
+                    <p class="filter-desc" id="desc-lead-likeness">Kriteria Lead-Like: MW (150-350 g/mol), LogP (-3.5 s/d 3.5), RotB &le; 7. Ideal sebagai molekul pangkal untuk optimasi kimia medisinal.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
 
         <!-- Tab 7: Batch CSV Screening -->
+        
+                    <!-- In Silico Organ Toxicity & Hepatic Metabolism Panel -->
+            <div class="card toxicity-profiler-card" style="grid-column: 1 / -1; margin-top: 20px;">
+              <div class="card-header">
+                <div>
+                  <h3><i class="fa-solid fa-heart-pulse"></i> In Silico Organ Toxicity & Hepatic Metabolism Profiler</h3>
+                  <p class="card-desc">Prediksi risiko kardiotoksisitas kanal hERG, mutagenisitas Ames DNA, toksisitas hati (DILI), dan profil interaksi enzim CYP450.</p>
+                </div>
+                <span class="badge badge-outline"><i class="fa-solid fa-microscope"></i> Predictive Safety</span>
+              </div>
+              <div class="card-body">
+                <div class="tox-panel-grid">
+                  <!-- hERG Cardiotoxicity Risk -->
+                  <div class="tox-card" id="card-tox-herg">
+                    <div class="tox-card-header">
+                      <span class="tox-icon"><i class="fa-solid fa-heart-crack"></i></span>
+                      <div>
+                        <h4>Kardiotoksisitas hERG</h4>
+                        <span class="tox-sub">Blokade Kanal Kalium I<sub>Kr</sub> (Risiko Aritmia/QT Prolongation)</span>
+                      </div>
+                    </div>
+                    <div class="tox-gauge-container">
+                      <div class="tox-gauge-bar">
+                        <div id="herg-gauge-fill" class="tox-gauge-fill" style="width: 25%; background: var(--color-success);"></div>
+                      </div>
+                      <div class="tox-gauge-labels">
+                        <span>Rendah (Aman)</span>
+                        <span>Moderat</span>
+                        <span>Tinggi (Bahaya)</span>
+                      </div>
+                    </div>
+                    <div class="tox-status-row">
+                      <span id="herg-badge" class="badge badge-success">Risiko Rendah</span>
+                      <span id="herg-score-text" class="tox-score-val">Skor: 18%</span>
+                    </div>
+                    <p id="herg-desc" class="tox-explanation">Lipofilitas dan densitas cincin aromatik berada di bawah ambang batas afinitas kanal hERG.</p>
+                  </div>
+
+                  <!-- Ames Mutagenicity -->
+                  <div class="tox-card" id="card-tox-ames">
+                    <div class="tox-card-header">
+                      <span class="tox-icon"><i class="fa-solid fa-dna"></i></span>
+                      <div>
+                        <h4>Uji Mutagenisitas Ames</h4>
+                        <span class="tox-sub">Potensi Kerusakan DNA & Karsinogenisitas Salmonella</span>
+                      </div>
+                    </div>
+                    <div class="tox-status-row" style="margin-top:15px;">
+                      <span id="ames-badge" class="badge badge-success"><i class="fa-solid fa-check"></i> Non-Mutagenik (Ames Negative)</span>
+                    </div>
+                    <p id="ames-desc" class="tox-explanation" style="margin-top:10px;">Tidak terdeteksi gugus toksikofor genotoksik primer (amina aromatik bebas, gugus nitro aromatik, atau agen alkilasi).</p>
+                  </div>
+
+                  <!-- DILI (Drug-Induced Liver Injury) -->
+                  <div class="tox-card" id="card-tox-dili">
+                    <div class="tox-card-header">
+                      <span class="tox-icon"><i class="fa-solid fa-disease"></i></span>
+                      <div>
+                        <h4>Hepatotoksisitas (DILI)</h4>
+                        <span class="tox-sub">Estimasi Risiko Kerusakan Sel Hati (*Drug-Induced Liver Injury*)</span>
+                      </div>
+                    </div>
+                    <div class="tox-status-row" style="margin-top:15px;">
+                      <span id="dili-badge" class="badge badge-warning"><i class="fa-solid fa-triangle-exclamation"></i> Risiko Moderat</span>
+                    </div>
+                    <p id="dili-desc" class="tox-explanation" style="margin-top:10px;">Parameter lipofilitas LogP > 3 mengindikasikan beban klirens hepatik fase I dan II yang membutuhkan monitoring enzim transaminase.</p>
+                  </div>
+                </div>
+
+                <!-- CYP450 5-Isoform Metabolism Panel -->
+                <div class="cyp450-panel-wrapper">
+                  <div class="section-title-sm"><i class="fa-solid fa-capsules"></i> Profil Metabolisme Enzim Sitokrom P450 Hepatik & Risiko DDI (Drug-Drug Interaction):</div>
+                  <div class="cyp450-grid" id="cyp450-grid">
+                    <!-- Dynamic CYP450 cards -->
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Tab 7: Tanimoto 2D Similarity & Drug Repurposing Explorer -->
+        <div id="tab-analogs" class="tab-pane">
+          <div class="analogs-container">
+            
+            <!-- Analog Similarity Card -->
+            <div class="card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-code-branch"></i> Penelusuran Senyawa Analog Cerdas (PubChem FastSimilarity 2D)</h3>
+                <span class="info-tooltip" title="Penapisan analog struktural berbasis koefisien Tanimoto 2D Fingerprint (Threshold >= 85%) untuk Lead Optimization">i</span>
+              </div>
+              <div class="card-body">
+                <p style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">
+                  Jika senyawa target menghadapi kendala toksisitas atau ketidaksesuaian farmakofor, daftar analog dengan kemiripan struktur tinggi (Tanimoto &ge; 85%) ini dapat menjadi kandidat alternatif untuk <em>lead optimization</em>.
+                </p>
+                
+                <div id="analogs-loading-box" style="display:none; text-align:center; padding:30px;">
+                  <div class="spinner" style="margin:0 auto 10px;"></div>
+                  <p style="font-size:13px; color:var(--color-primary);">Mencari analog struktural di PubChem FastSimilarity...</p>
+                </div>
+
+                <div class="analogs-grid" id="analogs-grid">
+                  <!-- Dynamic Analog Cards -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Target Protein & Repurposing Card -->
+            <div class="card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-crosshairs"></i> Target Biologis, Jalur Sinyal & Hipotesis Drug Repurposing</h3>
+              </div>
+              <div class="card-body">
+                <div class="target-explorer-grid">
+                  <div class="target-hero-card">
+                    <div class="target-name">
+                      <i class="fa-solid fa-dna" style="color:var(--color-primary);"></i>
+                      <span id="target-main-title">Memuat Target Biologis & Reseptor...</span>
+                    </div>
+                    <div style="font-size:12px; color:var(--text-muted);">
+                      <strong>Klasifikasi Target:</strong> <span id="target-class-val">-</span> | 
+                      <strong>Organisme:</strong> <span>Homo sapiens</span>
+                    </div>
+                    <div style="font-size:12px; color:var(--text-muted);">
+                      <strong>Mekanisme Aksi:</strong> <span id="target-moa-val">-</span>
+                    </div>
+
+                    <div class="repurposing-box">
+                      <h5><i class="fa-solid fa-lightbulb"></i> Potensi Repurposing & Efek Pleiotropik:</h5>
+                      <p id="target-repurpose-desc">
+                        Memuat data hipotesis drug repurposing...
+                      </p>
+                    </div>
+                  </div>
+
+                  <div class="target-hero-card">
+                    <div class="target-name">
+                      <i class="fa-solid fa-network-wired" style="color:var(--color-secondary);"></i>
+                      <span>Jalur Biologis Terkait (Biological Pathways)</span>
+                    </div>
+                    <div style="font-size:12px; color:var(--text-muted); display:flex; flex-direction:column; gap:8px;">
+                      <div class="stat-mini-card">
+                        <span class="d-label">KEGG Pathway</span>
+                        <span class="d-val" id="val-kegg-path" style="font-size:12px;">hsa00900: Terpenoid backbone biosynthesis</span>
+                      </div>
+                      <div class="stat-mini-card">
+                        <span class="d-label">Reactome Pathway</span>
+                        <span class="d-val" id="val-reactome-path" style="font-size:12px;">R-HSA-191273: Cholesterol biosynthesis</span>
+                      </div>
+                      <div class="stat-mini-card">
+                        <span class="d-label">ATC Code (Anatomical Therapeutic Chemical)</span>
+                        <span class="d-val code-font" id="val-atc-code" style="font-size:12px; color:var(--color-primary);">C10AA05 (Lipid modifying agents)</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Target explorer grid close -->
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+                    <!-- Target Fishing & Reverse Pharmacophore Screener -->
+            <div class="card target-fishing-card" style="margin-top:20px;">
+              <div class="card-header">
+                <div>
+                  <h3><i class="fa-solid fa-crosshairs"></i> Target Fishing & Reverse Pharmacophore Screener</h3>
+                  <p class="card-desc">Prediksi kelas reseptor dan makromolekul target farmakologis berdasarkan kecocokan farmakofor multiparameter.</p>
+                </div>
+                <span class="badge badge-outline"><i class="fa-solid fa-bullseye"></i> Reverse Screening</span>
+              </div>
+              <div class="card-body">
+                <div class="target-fishing-grid" id="target-fishing-grid">
+                  <!-- Dynamic Target Probability Bars -->
+                </div>
+              </div>
+            </div>
+
         <div id="tab-batch-csv" class="tab-pane">
           <div class="card">
             <div class="card-header">
@@ -665,6 +1076,39 @@
 
     </main>
 
+        <!-- Lab Research Notebook Modal Drawer -->
+    <div id="notebook-modal" class="modal-backdrop hidden">
+      <div class="modal-dialog notebook-modal-dialog">
+        <div class="modal-header">
+          <div class="modal-title-group">
+            <i class="fa-solid fa-book-bookmark"></i>
+            <h3>Lab Research Notebook & Sesi Proyek</h3>
+          </div>
+          <button id="btn-close-notebook" class="btn-icon"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body notebook-body">
+          <div class="notebook-actions-bar">
+            <button id="btn-notebook-export-json" class="btn btn-sm btn-primary"><i class="fa-solid fa-file-export"></i> Ekspor Sesi (.JSON)</button>
+            <label for="notebook-import-input" class="btn btn-sm btn-outline" style="cursor:pointer; margin-bottom:0;">
+              <i class="fa-solid fa-file-import"></i> Impor Sesi (.JSON)
+            </label>
+            <input type="file" id="notebook-import-input" accept=".json" style="display:none;">
+            <button id="btn-notebook-clear-all" class="btn btn-sm btn-outline text-danger" style="margin-left:auto;"><i class="fa-solid fa-trash-can"></i> Hapus Semua</button>
+          </div>
+
+          <div id="notebook-empty-state" class="notebook-empty hidden">
+            <i class="fa-solid fa-flask-vial"></i>
+            <p>Belum ada senyawa yang disimpan di Lab Notebook.</p>
+            <small>Klik tombol "Simpan ke Lab Notebook" pada senyawa yang sedang dianalisis untuk mencatat hipotesis riset Anda.</small>
+          </div>
+
+          <div id="notebook-list-container" class="notebook-cards-list">
+            <!-- Dynamic saved compound cards with user notes -->
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- App Footer -->
     <footer class="app-footer">
       <p>PharmaPulse 3D &copy; 2026 | Dikembangkan untuk Industri & Akademis Kimia Farmasi | Data oleh NCBI PubChem PUG-REST</p>
@@ -672,6 +1116,11 @@
 
   </div>
 
-  <script src="app.js"></script>
+    <script src="app.js?v=20261026_fixed3d"></script>
+  <script src="cadd_ext_pdb.js?v=20261028"></script>
+  <script src="cadd_ext_sketcher.js?v=20261028"></script>
+  <script src="cadd_ext_panels.js?v=20261028"></script>
+  <script src="cadd_ext_docking_notebook.js?v=20261028"></script>
+  <script src="cadd_suite.js?v=20261028"></script>
 </body>
 </html>

@@ -1,8 +1,22 @@
-# Operating System Files
+﻿# Operating System Files
 .DS_Store
 Thumbs.db
 
-# Logs & Temp
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Microsoft Office temporary lock files
+~$*.pptx
+~$*.docx
+~$*.xlsx
+~$*
+
+# Editor & Backup files
+*.bak
+*.backup_*
+*.tmp
 *.log
 node_modules/
 .vscode/
