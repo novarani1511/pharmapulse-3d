@@ -14,7 +14,7 @@ Aplikasi Web Berstandar Industri untuk Visualisasi Konformer 3D Molekul, Farmako
 **Disusun oleh:** Novarani  
 **Bidang:** Kimia Farmasi, Komputasi Medisinal & In Silico CADD  
 **Repositori:** [github.com/novarani1511/pharmapulse-3d](https://github.com/novarani1511/pharmapulse-3d)  
-**Server Demo:** http://localhost:3000
+**Live Web App:** [https://novarani1511.github.io/pharmapulse-3d/](https://novarani1511.github.io/pharmapulse-3d/)
 
 ---
 
@@ -148,7 +148,7 @@ Aplikasi Web Berstandar Industri untuk Visualisasi Konformer 3D Molekul, Farmako
 # 🙏 Terima Kasih
 
 Akses Langsung Aplikasi & Slide Interaktif:
-* **Aplikasi Utama:** http://localhost:3000
-* **Slide Presentasi:** http://localhost:3000/Presentasi_PharmaPulse_3D.html
+* **Aplikasi Utama (Live):** [https://novarani1511.github.io/pharmapulse-3d/](https://novarani1511.github.io/pharmapulse-3d/)
+* **Slide Presentasi (Live):** [https://novarani1511.github.io/pharmapulse-3d/Presentasi_PharmaPulse_3D.html](https://novarani1511.github.io/pharmapulse-3d/Presentasi_PharmaPulse_3D.html)
 * **File PowerPoint:** Presentasi_PharmaPulse_3D.pptx
 * **Repositori:** https://github.com/novarani1511/pharmapulse-3d

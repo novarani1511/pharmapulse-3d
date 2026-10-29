@@ -5,7 +5,12 @@
 [![ChEMBL API](https://img.shields.io/badge/ChEMBL-Bioactivity%20Data-ec4899?style=for-the-badge)](https://www.ebi.ac.uk/chembl/)
 [![RCSB PDB](https://img.shields.io/badge/RCSB-PDB%203D%20Targets-3b82f6?style=for-the-badge)](https://www.rcsb.org/)
 [![openFDA](https://img.shields.io/badge/openFDA-Pharmacovigilance-10b981?style=for-the-badge)](https://open.fda.gov/)
+[![Live Web App](https://img.shields.io/badge/Live%20App-novarani1511.github.io%2Fpharmapulse--3d-success?style=for-the-badge&logo=googlechrome)](https://novarani1511.github.io/pharmapulse-3d/)
+[![Live Presentation](https://img.shields.io/badge/Live%20Slides-Interactive%20Presentation-6366f1?style=for-the-badge&logo=revealdotjs)](https://novarani1511.github.io/pharmapulse-3d/Presentasi_PharmaPulse_3D.html)
 [![License: MIT](https://img.shields.io/badge/License-MIT-f59e0b?style=for-the-badge)](LICENSE)
+
+> 🌐 **URL Aplikasi Langsung (Live Web):** [https://novarani1511.github.io/pharmapulse-3d/](https://novarani1511.github.io/pharmapulse-3d/)  
+> 📊 **URL Salindia Presentasi (Live Slides):** [https://novarani1511.github.io/pharmapulse-3d/Presentasi_PharmaPulse_3D.html](https://novarani1511.github.io/pharmapulse-3d/Presentasi_PharmaPulse_3D.html)
 
 **PharmaPulse 3D** adalah platform komputasi kimia medisinal dan *Computer-Aided Drug Design* (CADD) berbasis web modern yang dirancang untuk riset akademis dan industri farmasi. Terintegrasi secara *live* dengan **PubChem PUG-REST API (NIH/NLM)**, **ChEMBL API (EMBL-EBI)**, **RCSB Protein Data Bank (PDB)**, dan **openFDA**, aplikasi ini memungkinkan analisis fisikokimia mendalam, pemodelan QSAR, penapisan *druglikeness*, simulasi penambatan molekuler (*molecular docking*), serta pemantauan keamanan farmakovigilans secara *real-time*.
 
@@ -105,7 +110,7 @@ px:
    - Atau melalui ekstensi **Live Server** di VS Code.
 
 3. **Buka di peramban web:**
-   Akses http://localhost:3000 pada Google Chrome, Edge, atau Firefox.
+   Akses langsung online melalui: **https://novarani1511.github.io/pharmapulse-3d/** (atau http://localhost:3000 jika dijalankan secara lokal).
 
 ---
 

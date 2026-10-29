@@ -4,7 +4,8 @@
 **Penyusun:** Novarani  
 **Bidang:** Kimia Farmasi / Industri Farmasi  
 **Repositori GitHub:** [https://github.com/novarani1511/pharmapulse-3d](https://github.com/novarani1511/pharmapulse-3d)  
-**Demo Server Lokal:** [http://localhost:3000](http://localhost:3000)  
+**Live Web Application:** [https://novarani1511.github.io/pharmapulse-3d/](https://novarani1511.github.io/pharmapulse-3d/)  
+**Live Interactive Presentation:** [https://novarani1511.github.io/pharmapulse-3d/Presentasi_PharmaPulse_3D.html](https://novarani1511.github.io/pharmapulse-3d/Presentasi_PharmaPulse_3D.html)  
 
 ---
 
