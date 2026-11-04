@@ -21,9 +21,9 @@ Aplikasi Web Berstandar Industri untuk Visualisasi Konformer 3D Molekul, Farmako
 # ⚠️ 1. Latar Belakang & Urgensi CADD di Industri Farmasi
 
 * **Krisis Biaya & Kegagalan Uji (Attrition Rate):**  
-  Riset obat baru menelan biaya rata-rata .6 Miliar dengan durasi 10–15 tahun. Tingkat kegagalan fase klinis mencapai >90%, sebagian besar akibat profil farmakokinetik (ADMET) yang buruk.
+  Riset obat baru menelan biaya rata-rata USD 2.6 Miliar dengan durasi 10–15 tahun. Tingkat kegagalan fase klinis mencapai >90%, sebagian besar akibat profil farmakokinetik (ADMET) yang buruk.
 * **Keterbatasan Software CADD Konvensional:**  
-  Software CADD profesional (MOE, Schrodinger, Discovery Studio) berlisensi ribuan dolar dan membutuhkan workstation komputasi berat.
+  Software CADD profesional (MOE, Schrödinger, Discovery Studio) berlisensi ribuan dolar dan membutuhkan workstation komputasi berat.
 * **Solusi Inovasi PharmaPulse 3D:**  
   Platform berbasis web murni (*zero-installation*), gratis, dan open-access yang menghubungkan data live PubChem NIH/NLM dengan algoritma komputasi industri farmasi.
 
@@ -43,25 +43,25 @@ Aplikasi Web Berstandar Industri untuk Visualisasi Konformer 3D Molekul, Farmako
 # 🛡️ 3. Evaluasi Fisikokimia & Druglikeness Standar
 
 * **Lipinski's Rule of Five (RO5):**
-  *  \le 500	ext{ g/mol}$ (Difusi membran optimal)
-  * $	ext{LogP} \le 5.0$ (Keseimbangan hidrofilik-lipofilik)
-  * $	ext{HBD} \le 5$ (Energi desolvasi ikatan hidrogen)
-  * $	ext{HBA} \le 10$ (Membatasi luas polaritas)
+  * $\text{MW} \le 500\text{ g/mol}$ (Difusi membran optimal)
+  * $\text{LogP} \le 5.0$ (Keseimbangan hidrofilik-lipofilik)
+  * $\text{HBD} \le 5$ (Energi desolvasi ikatan hidrogen)
+  * $\text{HBA} \le 10$ (Membatasi luas polaritas)
 * **Saringan Tambahan:**
-  * **Veber Filter:** $	ext{RotB} \le 10$ & $	ext{TPSA} \le 140	ext{ Å}^2$ (Bioavailabilitas oral tinggi)
+  * **Veber Filter:** $\text{RotB} \le 10$ & $\text{TPSA} \le 140\text{ Å}^2$ (Bioavailabilitas oral tinggi)
   * **Ghose Filter:** Rentang database obat komersial
-  * **Pfizer 3/75 Rule:** Deteksi risiko toksisitas in vivo 2.5x lebih tinggi ($	ext{LogP} > 3$ & $	ext{TPSA} < 75	ext{ Å}^2$)
+  * **Pfizer 3/75 Rule:** Deteksi risiko toksisitas in vivo 2.5x lebih tinggi ($\text{LogP} > 3$ & $\text{TPSA} < 75\text{ Å}^2$)
 
 ---
 
 # 📈 4. Pemodelan QSAR (pIC50), SwissADME Radar & PAINS
 
 * **Pemodelan QSAR ChEMBL:**  
-  Plot regresi linier bioaktivitas {50} = -\log_{10}(IC_{50})$ terhadap deskriptor lipofilitas dengan persamaan otomatis (^2 > 0.8$).
+  Plot regresi linier bioaktivitas $\text{pIC}_{50} = -\log_{10}(\text{IC}_{50})$ terhadap deskriptor lipofilitas dengan persamaan otomatis ($R^2 > 0.8$).
 * **SwissADME 6-Axis Radar:**  
   Visualisasi radar heksagonal kelayakan bioavailabilitas: LIPO, SIZE, POLAR, INSOLU, FLEX, dan INSATU.
 * **Peringatan Struktur PAINS & Brenk:**  
-  Deteksi motif pengganggu assay laboratorium (quinone, catecol, azo) dan gugus toksik terlarang.
+  Deteksi motif pengganggu assay laboratorium (quinone, catechol, azo) dan gugus toksik terlarang.
 
 ---
 
@@ -72,7 +72,7 @@ Aplikasi Web Berstandar Industri untuk Visualisasi Konformer 3D Molekul, Farmako
   * 🔵 **Bola Biru (HBD):** Donor ikatan hidrogen aktif (-OH & -NH).
   * 🟡 **Bola Kuning (Aromatic/Hydrophobic):** Cincin aromatik & gugus lipofilik.
 * **Alat Ukur Jarak & Sudut Ikatan 3D:**
-  * **Jarak Euclidean (Å):** Klik 2 atom berurutan untuk menghitung jarak riil  = \sqrt{dx^2 + dy^2 + dz^2}$ dalam satuan Ångström.
+  * **Jarak Euclidean (Å):** Klik 2 atom berurutan untuk menghitung jarak riil $d = \sqrt{dx^2 + dy^2 + dz^2}$ dalam satuan Ångström.
   * **Sudut Ikatan (°):** Klik 3 atom untuk menghitung sudut ikatan via vector dot product.
 
 ---
@@ -80,7 +80,7 @@ Aplikasi Web Berstandar Industri untuk Visualisasi Konformer 3D Molekul, Farmako
 # 🍳 6. Inovasi ADMET: Model Prediksi BOILED-Egg
 
 * **Berdasarkan Model Global Daina & Zoete (ChemMedChem 2016):**  
-  Plot bivariat $ vs $ untuk memprediksi penyerapan usus dan penetrasi sawar darah otak secara simultan.
+  Plot bivariat $\text{WLogP}$ vs $\text{TPSA}$ untuk memprediksi penyerapan usus dan penetrasi sawar darah otak secara simultan.
 * **Dua Kompartemen Utama:**
   * 🥚 **Zona Putih (HIA):** Absorpsi gastrointestinal usus tinggi (>80% bioavailabilitas oral).
   * 🟡 **Zona Kuning / Yolk (BBB):** Kemampuan menembus Sawar Darah Otak untuk obat sistem saraf pusat.
@@ -97,7 +97,7 @@ Aplikasi Web Berstandar Industri untuk Visualisasi Konformer 3D Molekul, Farmako
   * **Skor 3.6 - 6.0:** Sintesis Moderat (Rute organik multistep standar industri).
   * **Skor > 6.0:** Sintesis Sangat Kompleks (Pusat kiral banyak/makrosiklik).
 * **Saringan Senyawa Penuntun (Lead-Likeness Teague & Oprea):**  
-   \in [150, 350]	ext{ g/mol}$, $	ext{LogP} \in [-3.5, 3.5]$, $	ext{RotB} \le 7$ (Ideal untuk molekul awal optimasi).
+  $\text{MW} \in [150, 350]\text{ g/mol}$, $\text{LogP} \in [-3.5, 3.5]$, $\text{RotB} \le 7$ (Ideal untuk molekul awal optimasi).
 
 ---
 
@@ -130,7 +130,7 @@ Aplikasi Web Berstandar Industri untuk Visualisasi Konformer 3D Molekul, Farmako
 * **Mode Komparasi Multi-Obat:**  
   Matriks perbandingan berdampingan (*side-by-side*) hingga 3 senyawa obat secara simultan.
 * **Dokumen Dossier Ilmiah (Print Ready):**  
-  Format cetak resmi @media print yang mengubah tema web menjadi dokumen laporan riset laboratorium berstandar publikasi ilmiah.
+  Format cetak resmi `@media print` yang mengubah tema web menjadi dokumen laporan riset laboratorium berstandar publikasi ilmiah.
 
 ---
 
@@ -150,5 +150,5 @@ Aplikasi Web Berstandar Industri untuk Visualisasi Konformer 3D Molekul, Farmako
 Akses Langsung Aplikasi & Slide Interaktif:
 * **Aplikasi Utama (Live):** [https://novarani1511.github.io/pharmapulse-3d/](https://novarani1511.github.io/pharmapulse-3d/)
 * **Slide Presentasi (Live):** [https://novarani1511.github.io/pharmapulse-3d/Presentasi_PharmaPulse_3D.html](https://novarani1511.github.io/pharmapulse-3d/Presentasi_PharmaPulse_3D.html)
-* **File PowerPoint:** Presentasi_PharmaPulse_3D.pptx
+* **File PowerPoint:** `Presentasi_PharmaPulse_3D.pptx`
 * **Repositori:** https://github.com/novarani1511/pharmapulse-3d

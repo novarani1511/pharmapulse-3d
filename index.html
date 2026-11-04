@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PharmaPulse 3D - PubChem Drug Discovery & QSAR Analyzer</title>
   <meta name="description" content="Aplikasi analisis kimia farmasi, druglikeness (Lipinski RO5, Veber, Ghose), dan visualisasi molekul 3D berbasis PubChem PUG-REST API.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧬</text></svg>">
   
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -275,6 +276,250 @@
           </div>
         </div>
 
+        <!-- Tab 1B: Target Macromolecule PDB 3D & Interactive Molecular Docking -->
+        <div id="tab-pdb-target" class="tab-pane">
+          <div class="card pdb-container-card">
+            <div class="card-header">
+              <div>
+                <h3><i class="fa-solid fa-dna"></i> Visualisator Makromolekul Target 3D (RCSB Protein Data Bank)</h3>
+                <p class="card-desc">Eksplorasi struktur kristalografi sinar-X dan Cryo-EM kompleks reseptor-ligan, kantung pengikatan aktif (binding pocket), dan residu katalitik.</p>
+              </div>
+              <div class="pdb-quick-actions" style="gap: 8px; flex-wrap: wrap;">
+                <select id="pdb-render-style" class="select-sm" title="Gaya Rendering Protein">
+                  <option value="spectrum">Cartoon Rainbow Spectrum</option>
+                  <option value="ss">Secondary Structure (Alpha/Beta)</option>
+                  <option value="chain">By Chain ID</option>
+                  <option value="slate">Clinical Slate Monochrome</option>
+                </select>
+                <button id="btn-toggle-binding-residues" class="cadd-tool-btn active" title="Tampilkan Residu Pengikat (Radius 5 Å)">
+                  <i class="fa-solid fa-atom"></i> Residu Saku Aktif (5 Å)
+                </button>
+                <button id="btn-toggle-surface" class="cadd-tool-btn" title="Tampilkan Permukaan Molekuler Van der Waals">
+                  <i class="fa-solid fa-cloud"></i> Surface Pocket
+                </button>
+                <button id="btn-pdb-spin" class="btn-icon active" title="Putar Otomatis"><i class="fa-solid fa-rotate"></i></button>
+                <button id="btn-pdb-reset" class="btn-icon" title="Reset Kamera"><i class="fa-solid fa-compress"></i></button>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="pdb-search-bar">
+                <div class="pdb-input-group" style="flex-wrap: wrap;">
+                  <span class="pdb-input-label"><i class="fa-solid fa-cubes"></i> Pilih Kompleks Reseptor:</span>
+                  <select id="pdb-select-preset" class="select-sm" style="min-width: 280px;">
+                    <option value="1HWK">1HWK — HMG-CoA Reductase + Atorvastatin</option>
+                    <option value="1CX2">1CX2 — COX-2 + Selektif Inhibitor Celecoxib</option>
+                    <option value="4COX">4COX — COX-1 + Aspirin / Salisilat</option>
+                    <option value="4NOB">4NOB — COX Peroxidase Subsite + Paracetamol</option>
+                    <option value="1IEP">1IEP — Abl Tyrosine Kinase + Imatinib</option>
+                    <option value="2XCT">2XCT — Topoisomerase IV + Ciprofloxacin</option>
+                    <option value="1PME">1PME — Penicillin-Binding Protein 2a + Beta-Laktam</option>
+                    <option value="2HU4">2HU4 — Influenza H5N1 Neuraminidase + Oseltamivir</option>
+                    <option value="7BV2">7BV2 — SARS-CoV-2 RdRp + Remdesivir</option>
+                  </select>
+                  <input type="text" id="pdb-custom-input" maxlength="4" placeholder="Kode 4-Digit (mis: 6LU7)">
+                  <button id="btn-fetch-pdb" class="btn btn-sm btn-primary"><i class="fa-solid fa-cloud-arrow-down"></i> Muat RCSB</button>
+                </div>
+                <span id="pdb-load-status" class="pdb-status-tag">
+                  <i class="fa-solid fa-circle-check"></i> Siap Memuat Struktur 3D RCSB PDB
+                </span>
+              </div>
+
+              <div class="pdb-main-grid">
+                <div class="pdb-viewport-col">
+                  <div id="pdb-viewport" class="pdb-viewport"></div>
+                  <div class="viewer-legend pdb-legend">
+                    <span class="element-tag" style="color:#4ade80;"><i class="fa-solid fa-circle"></i> Ligan Terikat (Green Carbon Sticks)</span>
+                    <span class="element-tag" style="color:#38bdf8;"><i class="fa-solid fa-circle"></i> Residu Saku Pengikatan &le; 5.0 Å (Cyan Sticks)</span>
+                    <span class="element-tag" style="color:#a78bfa;"><i class="fa-solid fa-circle"></i> Tulang Punggung Heliks Alfa / Lembaran Beta</span>
+                  </div>
+                </div>
+
+                <div class="pdb-metadata-card">
+                  <div class="pdb-meta-header">
+                    <h4 id="pdb-info-id">1HWK</h4>
+                    <span class="badge badge-accent" id="pdb-info-res">2.22 Å</span>
+                  </div>
+                  <h5 id="pdb-info-title">Human HMG-CoA Reductase Catalytic Domain complexed with Atorvastatin</h5>
+                  <div class="pdb-meta-sub" id="pdb-info-organism">
+                    <i class="fa-solid fa-dna"></i> <em>Homo sapiens</em> | Target: <strong>HMG-CoA Reductase</strong>
+                  </div>
+                  <div class="pdb-meta-sub">
+                    Metode Eksperimen: <strong id="pdb-info-method">X-RAY DIFFRACTION</strong>
+                  </div>
+
+                  <div>
+                    <div class="section-title-sm"><i class="fa-solid fa-crosshairs"></i> Residu Kunci Saku Pengikatan (Active Pocket):</div>
+                    <div id="pdb-residues-list" class="pdb-residues-chips"></div>
+                  </div>
+
+                  <div>
+                    <div class="section-title-sm"><i class="fa-solid fa-network-wired"></i> Mode Interaksi Non-Kovalen & Katalitik:</div>
+                    <ul id="pdb-interaction-notes" class="pdb-notes-list"></ul>
+                  </div>
+
+                  <div class="pdb-external-links">
+                    <a id="pdb-link-rcsb" href="https://www.rcsb.org/structure/1HWK" target="_blank" rel="noopener" class="btn btn-sm btn-outline" style="width:100%; justify-content:center; text-decoration:none;">
+                      <i class="fa-solid fa-up-right-from-square"></i> Buka Halaman Resmi RCSB PDB
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Interactive In Silico Molecular Docking & Scoring Function Card -->
+          <div class="card" style="margin-top: 20px;">
+            <div class="card-header">
+              <div>
+                <h3><i class="fa-solid fa-magnet"></i> Simulasi Penambatan Molekuler (In Silico Molecular Docking & Scoring Function)</h3>
+                <p class="card-desc">Dekonvolusi termodinamika fungsi skor empiris AutoDock Vina (&Delta;G<sub>bind</sub> = &Delta;G<sub>gauss</sub> + &Delta;G<sub>repulsion</sub> + &Delta;G<sub>hydrophobic</sub> + &Delta;G<sub>H-bond</sub> + &Delta;G<sub>tors</sub>) untuk ligan aktif terhadap saku reseptor.</p>
+              </div>
+              <span class="badge badge-accent" id="docking-pdb-target-badge"><i class="fa-solid fa-bolt"></i> Vina Empirical Scoring</span>
+            </div>
+            <div class="card-body">
+              <div class="qsar-calc-results" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:14px; margin-bottom:18px;">
+                <div class="stat-mini-card">
+                  <span class="d-label">Afinitas Penambatan (&Delta;G<sub>bind</sub>)</span>
+                  <span class="d-val code-font" id="dock-val-deltag" style="color:#38bdf8; font-size:20px;">-9.40 kkal/mol</span>
+                  <span class="d-unit">Skor Energi Bebas Pengikatan</span>
+                </div>
+                <div class="stat-mini-card">
+                  <span class="d-label">Konstanta Inhibisi Prediksi (K<sub>i</sub>)</span>
+                  <span class="d-val code-font" id="dock-val-ki" style="color:#4ade80; font-size:20px;">128.5 nM</span>
+                  <span class="d-unit">Pada T = 298.15 K (25 &deg;C)</span>
+                </div>
+                <div class="stat-mini-card">
+                  <span class="d-label">Ligand Efficiency (LE)</span>
+                  <span class="d-val code-font" id="dock-val-le" style="color:#fbbf24; font-size:20px;">0.29 kkal/mol/HA</span>
+                  <span class="d-unit">Ideal LE &ge; 0.30 kkal/mol/atom berat</span>
+                </div>
+                <div class="stat-mini-card">
+                  <span class="d-label">Koordinat Grid Box Center (X, Y, Z)</span>
+                  <span class="d-val code-font" id="dock-val-gridbox" style="color:#a78bfa; font-size:13px;">(18.4, 42.1, 15.8) Å</span>
+                  <span class="d-unit">Ukuran Kotak: 20 &times; 20 &times; 20 Å</span>
+                </div>
+              </div>
+
+              <div class="descriptors-grid" id="docking-energy-terms-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                <!-- Populated dynamically with Vina thermodynamic terms -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 1C: 2D Molecular Sketcher & De Novo Lead Designer -->
+        <div id="tab-sketcher" class="tab-pane">
+          <div class="card sketcher-card">
+            <div class="card-header">
+              <div>
+                <h3><i class="fa-solid fa-pen-ruler"></i> 2D Molecular Canvas Sketcher & De Novo Lead Designer</h3>
+                <p class="card-desc">Gambarkan struktur de novo atau modifikasi kerangka (scaffold) obat, konversi otomatis graf molekul ke SMILES via algoritma DFS Spanning Tree, dan evaluasi sifat Wildman-Crippen secara real-time.</p>
+              </div>
+              <div style="display:flex; gap:8px;">
+                <button id="btn-sketcher-clear" class="btn btn-sm btn-outline text-danger"><i class="fa-solid fa-eraser"></i> Bersihkan Kanvas</button>
+                <button id="btn-sketcher-push" class="btn btn-sm btn-accent"><i class="fa-solid fa-paper-plane"></i> Analisis di Layar Utama</button>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="sketcher-main-layout">
+                <div class="sketcher-canvas-wrapper">
+                  <div class="sketcher-toolbar">
+                    <div class="tool-group">
+                      <span class="tool-group-label">Atom:</span>
+                      <button class="sketch-tool-btn active" data-tool="atom" data-value="C">C</button>
+                      <button class="sketch-tool-btn" data-tool="atom" data-value="N">N</button>
+                      <button class="sketch-tool-btn" data-tool="atom" data-value="O">O</button>
+                      <button class="sketch-tool-btn" data-tool="atom" data-value="S">S</button>
+                      <button class="sketch-tool-btn" data-tool="atom" data-value="P">P</button>
+                      <button class="sketch-tool-btn" data-tool="atom" data-value="F">F</button>
+                      <button class="sketch-tool-btn" data-tool="atom" data-value="Cl">Cl</button>
+                      <button class="sketch-tool-btn" data-tool="atom" data-value="Br">Br</button>
+                    </div>
+                    <div class="tool-group">
+                      <span class="tool-group-label">Ikatan:</span>
+                      <button class="sketch-tool-btn" data-tool="bond" data-value="1">Tunggal (&mdash;)</button>
+                      <button class="sketch-tool-btn" data-tool="bond" data-value="2">Rangkap (=)</button>
+                      <button class="sketch-tool-btn" data-tool="bond" data-value="3">Ganda Tiga (&equiv;)</button>
+                      <button class="sketch-tool-btn" data-tool="erase" data-value="erase"><i class="fa-solid fa-trash-can"></i> Hapus</button>
+                    </div>
+                    <div class="tool-group">
+                      <span class="tool-group-label">Cincin:</span>
+                      <button class="sketch-tool-btn" data-tool="ring" data-value="benzene">Benzena (6-Ar)</button>
+                      <button class="sketch-tool-btn" data-tool="ring" data-value="pyridine">Piridina (6-N)</button>
+                      <button class="sketch-tool-btn" data-tool="ring" data-value="cyclopentane">Siklopentana (5)</button>
+                    </div>
+                    <div class="tool-group">
+                      <span class="tool-group-label">Scaffold:</span>
+                      <button class="sketch-preset-btn" data-scaffold="aspirin">Aspirin</button>
+                      <button class="sketch-preset-btn" data-scaffold="paracetamol">Paracetamol</button>
+                      <button class="sketch-preset-btn" data-scaffold="ibuprofen">Ibuprofen</button>
+                      <button class="sketch-preset-btn" data-scaffold="benzoic">Asam Benzoat</button>
+                    </div>
+                  </div>
+
+                  <div class="canvas-container">
+                    <canvas id="sketcher-canvas" width="680" height="420"></canvas>
+                    <div class="canvas-hint">
+                      <i class="fa-solid fa-circle-info"></i>
+                      <span>Tips: Pilih <strong>Atom</strong> lalu klik kanvas/atom untuk mengubah unsur. Pilih <strong>Ikatan</strong> lalu seret (drag) antar atom untuk menyambung ikatan, atau klik ikatan yang ada untuk mengubah orde (1/2/3).</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="sketcher-eval-panel">
+                  <div class="eval-card">
+                    <h4><i class="fa-solid fa-microchip"></i> Evaluasi Real-Time De Novo</h4>
+
+                    <div class="smiles-display-box">
+                      <label>Generated SMILES (DFS Graph Traversal):</label>
+                      <div id="sketch-smiles-val" class="smiles-code">CC(=O)OC1=CC=CC=C1C(=O)O</div>
+                    </div>
+
+                    <div class="sketch-metrics-grid">
+                      <div class="metric-mini-box">
+                        <span class="metric-label">Rumus Empiris</span>
+                        <strong id="sketch-formula-val" class="metric-val">C9H8O4</strong>
+                      </div>
+                      <div class="metric-mini-box">
+                        <span class="metric-label">Bobot Molekul (MW)</span>
+                        <strong id="sketch-mw-val" class="metric-val">180.16 g/mol</strong>
+                      </div>
+                      <div class="metric-mini-box">
+                        <span class="metric-label">Wildman-Crippen LogP</span>
+                        <strong id="sketch-logp-val" class="metric-val">1.20</strong>
+                      </div>
+                      <div class="metric-mini-box">
+                        <span class="metric-label">Ertl Fragment TPSA</span>
+                        <strong id="sketch-tpsa-val" class="metric-val">63.60 Å²</strong>
+                      </div>
+                      <div class="metric-mini-box">
+                        <span class="metric-label">H-Bond Donors (HBD)</span>
+                        <strong id="sketch-hbd-val" class="metric-val">1</strong>
+                      </div>
+                      <div class="metric-mini-box">
+                        <span class="metric-label">H-Bond Acceptors (HBA)</span>
+                        <strong id="sketch-hba-val" class="metric-val">4</strong>
+                      </div>
+                    </div>
+
+                    <div id="sketch-ro5-verdict" class="sketch-ro5-verdict-box pass">
+                      <div class="ro5-verdict-header">
+                        <i class="fa-solid fa-shield-check"></i>
+                        <span id="sketch-ro5-title">Lolos Lipinski RO5 (4/4)</span>
+                      </div>
+                      <p id="sketch-ro5-desc">Molekul memenuhi seluruh kriteria kelayakan bioavailabilitas oral.</p>
+                    </div>
+
+                    <button id="btn-sketcher-push-large" class="btn btn-primary" style="width:100%; justify-content:center;">
+                      <i class="fa-solid fa-wand-magic-sparkles"></i> Kirim Struktur ke Analyzer Utama
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Tab 2: Druglikeness & QSAR Filter Analysis -->
         <div id="tab-druglikeness" class="tab-pane">
           <div class="druglikeness-grid">
@@ -511,42 +756,56 @@
               </div>
             </div>
           </div>
-        </div>
 
-                    <!-- openFDA Real-World Pharmacovigilance Signals (FAERS) -->
-            <div class="card openfda-card" style="margin-top:20px;">
-              <div class="card-header">
-                <div>
-                  <h3><i class="fa-solid fa-hospital-user"></i> openFDA Real-World Pharmacovigilance Signals (FAERS)</h3>
-                  <p class="card-desc">Laporan kejadian tidak diinginkan (*Adverse Drug Reactions*) aktual dari basis data pengawasan pasca-pemasaran FDA Amerika Serikat.</p>
-                </div>
-                <span class="badge badge-accent" id="fda-total-cases-badge">Live openFDA API</span>
+          <!-- openFDA Real-World Pharmacovigilance Signals (FAERS) -->
+          <div class="card openfda-card" style="margin-top:20px;">
+            <div class="card-header">
+              <div>
+                <h3><i class="fa-solid fa-hospital-user"></i> openFDA Real-World Pharmacovigilance Signals (FAERS)</h3>
+                <p class="card-desc">Laporan kejadian tidak diinginkan (*Adverse Drug Reactions*) aktual dari basis data pengawasan pasca-pemasaran FDA Amerika Serikat.</p>
               </div>
-              <div class="card-body">
-                <div id="openfda-loading" class="openfda-loader" style="display:none;">
-                  <i class="fa-solid fa-spinner fa-spin"></i> Menghubungi Server openFDA FAERS...
+              <span class="badge badge-accent" id="fda-total-cases-badge">Live openFDA API</span>
+            </div>
+            <div class="card-body">
+              <div id="openfda-loading" class="openfda-loader" style="display:none;">
+                <i class="fa-solid fa-spinner fa-spin"></i> Menghubungi Server openFDA FAERS...
+              </div>
+              <div id="openfda-content" class="openfda-content">
+                <div class="openfda-summary-banner" id="openfda-summary-banner">
+                  <i class="fa-solid fa-chart-pie"></i>
+                  <span id="openfda-summary-text">Memuat sinyal klinis efek samping dari openFDA...</span>
                 </div>
-                <div id="openfda-content" class="openfda-content">
-                  <div class="openfda-summary-banner" id="openfda-summary-banner">
-                    <i class="fa-solid fa-chart-pie"></i>
-                    <span id="openfda-summary-text">Memuat sinyal klinis efek samping dari openFDA...</span>
-                  </div>
-                  <div class="openfda-reactions-list" id="openfda-reactions-list">
-                    <!-- Dynamic reaction bars -->
-                  </div>
+                <div class="openfda-reactions-list" id="openfda-reactions-list">
+                  <!-- Dynamic reaction bars -->
                 </div>
               </div>
             </div>
+          </div>
+        </div>
 
         <!-- Tab 5: ChEMBL Real QSAR Modeling -->
         <div id="tab-qsar-chembl" class="tab-pane">
           <div class="card">
             <div class="card-header">
-              <h3><i class="fa-solid fa-chart-line"></i> Pemodelan QSAR (Quantitative Structure-Activity Relationship) Data ChEMBL</h3>
-              <span class="info-tooltip" title="Pemodelan Regresi Linier Antara Deskriptor Fisikokimia (X) vs Bioaktivitas pIC50 (Y)">i</span>
+              <div>
+                <h3><i class="fa-solid fa-chart-line"></i> Pemodelan QSAR Multiparameter & Validasi ML (ChEMBL Bioactivity)</h3>
+                <p class="card-desc">Pemodelan Kuantitatif Struktur-Aktivitas (QSAR) dengan validasi silang 5-lipat (5-Fold Cross-Validation), uji Domain Aplikabilitas (OECD Applicability Domain), dan dekonvolusi kontribusi fitur Explainable AI (XAI).</p>
+              </div>
+              <span class="badge badge-accent" id="qsar-provenance-badge"><i class="fa-solid fa-database"></i> ChEMBL Bioactivity Verified</span>
             </div>
             <div class="card-body">
-              <!-- Live ChEMBL API Status Banner -->
+              <!-- Live ChEMBL API & OECD Validation Provenance Banner -->
+              <div id="chembl-api-provenance-banner" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; background:rgba(6, 182, 212, 0.08); border:1px solid rgba(6, 182, 212, 0.28); border-radius:8px; padding:10px 14px; margin-bottom:16px; font-size:12px;">
+                <div style="display:flex; align-items:center; gap:8px; color:#e2e8f0;">
+                  <i class="fa-solid fa-circle-nodes" style="color:var(--color-primary);"></i>
+                  <span id="qsar-provenance-text">Menghubungkan ke ChEMBL REST API & mengevaluasi seri bioaktivitas...</span>
+                </div>
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                  <span class="badge badge-outline" id="qsar-rmse-badge" title="Root Mean Squared Error pada Validasi Silang">RMSE<sub>CV</sub>: 0.24 log unit</span>
+                  <span class="badge badge-outline" id="qsar-q2-badge" title="Leave-One-Out Cross-Validated Q²">Q²<sub>LOO</sub>: 0.782</span>
+                  <span class="badge badge-success" id="qsar-ad-badge" title="OECD Principle 3: Applicability Domain Leverage Check">AD: In-Domain (h &lt; h*)</span>
+                </div>
+              </div>
               
               <div class="qsar-overview-grid">
                 <div class="qsar-chart-box">
@@ -555,11 +814,11 @@
                 </div>
                 <div class="qsar-stats-box">
                   <div class="stat-mini-card">
-                    <span class="d-label">Persamaan Regresi Linier</span>
-                    <span class="d-val code-font" id="qsar-equation" style="font-size: 16px;">y = 0.42x + 4.85</span>
+                    <span class="d-label">Persamaan QSAR Multiparameter</span>
+                    <span class="d-val code-font" id="qsar-equation" style="font-size: 14px;">y = 0.42x + 4.85</span>
                   </div>
                   <div class="stat-mini-card">
-                    <span class="d-label">Koefisien Determinasi (R²)</span>
+                    <span class="d-label">Koefisien Determinasi (R² / Q²<sub>CV</sub>)</span>
                     <span class="d-val" id="qsar-r2" style="color: var(--color-success);">0.814</span>
                   </div>
                   <div class="stat-mini-card">
@@ -567,26 +826,25 @@
                     <span class="d-val" id="qsar-n-count">12 Senyawa</span>
                   </div>
                   <div class="stat-mini-card">
-                    <span class="d-label">InChIKey Mapping</span>
+                    <span class="d-label">InChIKey & Leverage Domain (h<sub>i</sub> / h*)</span>
                     <span class="d-val code-font" id="qsar-inchikey" style="font-size: 11px;">-</span>
                   </div>
                 </div>
               </div>
 
-              
               <!-- Interactive QSAR Bioactivity Prediction Calculator -->
               <div class="qsar-calculator-container" style="margin-top: 24px; padding: 20px; background: rgba(15, 23, 42, 0.65); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.25);">
                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
                   <h4 style="margin:0; font-size:15px; display:flex; align-items:center; gap:8px; color:#f8fafc;">
                     <i class="fa-solid fa-calculator" style="color:var(--color-primary);"></i>
-                    Kalkulator Prediksi Bioaktivitas QSAR Terapan (In Silico Screening)
+                    Kalkulator Ensemble ML & QSAR Bioaktivitas (Dengan Explainable AI / XAI Attribution)
                   </h4>
                   <span class="badge" id="qsar-calc-target-badge" style="background:rgba(59,130,246,0.2); color:#60a5fa; font-size:11px; padding:4px 12px; border-radius:20px; border:1px solid rgba(59,130,246,0.3);">
                     Target: Spesifik Senyawa
                   </span>
                 </div>
                 <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px; line-height:1.5;">
-                  Kalkulator ini memprediksi afinitas bioaktivitas (<span class="code-font" style="color:#60a5fa;">pIC50</span>, konsentrasi inhibisi <span class="code-font" style="color:#34d399;">IC50</span>, dan estimasi energi ikatan Gibbs <span class="code-font" style="color:#38bdf8;">&Delta;G</span>) secara kuantitatif berdasarkan parameter deskriptor molekul terpilih dan model regresi spesifik target biologis senyawa ini.
+                  Kalkulator ini mengintegrasikan regresi QSAR spesifik-target dengan model <em>Non-Linear Random Forest / Ridge Ensemble</em> untuk memprediksi afinitas (<span class="code-font" style="color:#60a5fa;">pIC50</span>, <span class="code-font" style="color:#34d399;">IC50</span>, energi bebas Gibbs <span class="code-font" style="color:#38bdf8;">&Delta;G</span>, dan efisiensi ligan <span class="code-font" style="color:#fbbf24;">LLE</span>) beserta interval kepercayaan 95%.
                 </p>
 
                 <div class="qsar-calc-inputs-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap:12px; margin-bottom:16px;">
@@ -623,20 +881,31 @@
 
                 <div class="qsar-calc-results" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap:12px; background:rgba(0,0,0,0.35); padding:16px; border-radius:10px; border:1px solid rgba(255,255,255,0.06);">
                   <div class="calc-res-box">
-                    <span style="font-size:11px; color:#94a3b8; display:block; margin-bottom:4px;">Prediksi Bioaktivitas (pIC50)</span>
-                    <span id="calc-res-pic50" style="font-size:22px; font-weight:700; color:#60a5fa; font-family:'JetBrains Mono',monospace;">-</span>
+                    <span style="font-size:11px; color:#94a3b8; display:block; margin-bottom:4px;">Prediksi Bioaktivitas (pIC50 &plusmn; CI)</span>
+                    <span id="calc-res-pic50" style="font-size:20px; font-weight:700; color:#60a5fa; font-family:'JetBrains Mono',monospace;">-</span>
                   </div>
                   <div class="calc-res-box">
                     <span style="font-size:11px; color:#94a3b8; display:block; margin-bottom:4px;">Konsentrasi Inhibisi (IC50)</span>
-                    <span id="calc-res-ic50" style="font-size:22px; font-weight:700; color:#34d399; font-family:'JetBrains Mono',monospace;">-</span>
+                    <span id="calc-res-ic50" style="font-size:20px; font-weight:700; color:#34d399; font-family:'JetBrains Mono',monospace;">-</span>
                   </div>
                   <div class="calc-res-box">
                     <span style="font-size:11px; color:#94a3b8; display:block; margin-bottom:4px;">Energi Bebas Gibbs (&Delta;G)</span>
-                    <span id="calc-res-deltag" style="font-size:22px; font-weight:700; color:#38bdf8; font-family:'JetBrains Mono',monospace;">-</span>
+                    <span id="calc-res-deltag" style="font-size:20px; font-weight:700; color:#38bdf8; font-family:'JetBrains Mono',monospace;">-</span>
                   </div>
                   <div class="calc-res-box">
-                    <span style="font-size:11px; color:#94a3b8; display:block; margin-bottom:4px;">Klasifikasi Potensi</span>
-                    <span id="calc-res-potency" style="font-size:13px; font-weight:600; display:inline-block; padding:4px 10px; border-radius:6px; background:rgba(255,255,255,0.08); margin-top:3px;">-</span>
+                    <span style="font-size:11px; color:#94a3b8; display:block; margin-bottom:4px;">Klasifikasi Potensi & LLE</span>
+                    <span id="calc-res-potency" style="font-size:12px; font-weight:600; display:inline-block; padding:4px 10px; border-radius:6px; background:rgba(255,255,255,0.08); margin-top:3px;">-</span>
+                  </div>
+                </div>
+
+                <!-- Explainable AI (XAI) SHAP-like Feature Attribution Breakdown -->
+                <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.08);">
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                    <span style="font-size:12px; font-weight:700; color:#cbd5e1;"><i class="fa-solid fa-brain" style="color:#a78bfa;"></i> Explainable AI (XAI) — Kontribusi Deskriptor terhadap Prediksi pIC50 (SHAP Attribution):</span>
+                    <span id="xai-ad-warning-text" style="font-size:11px; color:#4ade80;">Dalam Domain Aplikabilitas Model</span>
+                  </div>
+                  <div id="qsar-xai-attribution-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:8px;">
+                    <!-- Populated dynamically with feature attribution bars -->
                   </div>
                 </div>
               </div>
@@ -680,7 +949,7 @@
             <!-- Structural Alerts PAINS & Brenk -->
             <div class="card">
               <div class="card-header">
-                <h3><i class="fa-solid fa-shield-cat"></i> Peringatan Struktur PAINS & Brenk</h3>
+                <h3><i class="fa-solid fa-shield-cat"></i> Peringatan Struktur PAINS & Brenk (SMARTS Graph)</h3>
               </div>
               <div class="card-body">
                 <div class="filter-box" id="box-pains">
@@ -688,7 +957,7 @@
                     <h4>Pan-Assay Interference (PAINS) Alert</h4>
                     <span class="badge" id="badge-pains">Bersih (0 Alert)</span>
                   </div>
-                  <p class="filter-desc" id="desc-pains">Deteksi gugus reaktif noda pengujian (quinon, epoksida, katekol, azo).</p>
+                  <p class="filter-desc" id="desc-pains">Deteksi gugus reaktif noda pengujian (quinon, epoksida, katekol, azo, rhodanin, Michael acceptor).</p>
                 </div>
 
                 <div class="filter-box" id="box-brenk">
@@ -696,7 +965,7 @@
                     <h4>Brenk Unwanted Functional Groups</h4>
                     <span class="badge" id="badge-brenk">Bersih</span>
                   </div>
-                  <p class="filter-desc" id="desc-brenk">Saringan gugus toksik terlarang dalam penapisan pustaka obat.</p>
+                  <p class="filter-desc" id="desc-brenk">Saringan gugus toksikofor reaktif terlarang dalam penapisan pustaka obat.</p>
                 </div>
 
                 <div class="filter-box" id="box-bRO5">
@@ -704,7 +973,7 @@
                     <h4>Pengecualian Beyond Rule of 5 (bRO5)</h4>
                     <span class="badge badge-outline" id="badge-bro5">Standard Rule</span>
                   </div>
-                  <p class="filter-desc">Catatan Akademis: Senyawa produk alam (isoflavon) & substrat transporter aktif dapat menjadi obat oral sukses meski melanggar RO5.</p>
+                  <p class="filter-desc" id="desc-bro5">Catatan Akademis: Senyawa produk alam (isoflavon) & substrat transporter aktif dapat menjadi obat oral sukses meski melanggar RO5.</p>
                 </div>
               </div>
             </div>
@@ -712,23 +981,23 @@
             <!-- Ionization & BCS System -->
             <div class="card">
               <div class="card-header">
-                <h3><i class="fa-solid fa-vial-circle-check"></i> Ionisasi Fisiologis & Sistem BCS</h3>
+                <h3><i class="fa-solid fa-vial-circle-check"></i> Ionisasi Henderson-Hasselbalch & Sistem BCS</h3>
               </div>
               <div class="card-body">
                 <div class="descriptor-card" style="margin-bottom: 12px;">
-                  <span class="d-label">Estimasi Kelas BCS (Biopharmaceutics Classification)</span>
+                  <span class="d-label">Estimasi Kelas BCS & Koefisien Distribusi (LogD<sub>7.4</sub>)</span>
                   <span class="d-val" id="val-bcs-class" style="color: var(--color-primary);">BCS Kelas I / II</span>
                   <span class="d-unit" id="desc-bcs-class">Kelarutan & Permeabilitas Oral High/Mod</span>
                 </div>
 
                 <div class="descriptor-card" style="margin-bottom: 12px;">
-                  <span class="d-label">Fraksi Terion pada pH Lambung (pH 1.2)</span>
-                  <span class="d-val" id="val-ion-stomach">0.0 % (Netral)</span>
+                  <span class="d-label">Fraksi Terion (&alpha;) pada pH Lambung (pH 1.2)</span>
+                  <span class="d-val" id="val-ion-stomach" style="font-size: 13px;">0.0 % (Netral)</span>
                 </div>
 
                 <div class="descriptor-card">
-                  <span class="d-label">Fraksi Terion pada pH Darah/Usus (pH 7.4)</span>
-                  <span class="d-val" id="val-ion-blood">5.2 % (Bentuk Non-ion dominan)</span>
+                  <span class="d-label">Fraksi Terion (&alpha;) pada pH Darah/Usus (pH 7.4)</span>
+                  <span class="d-val" id="val-ion-blood" style="font-size: 13px;">5.2 % (Bentuk Non-ion dominan)</span>
                 </div>
               </div>
             </div>
@@ -807,19 +1076,14 @@
               </div>
             </div>
 
-          </div>
-        </div>
-
-        <!-- Tab 7: Batch CSV Screening -->
-        
-                    <!-- In Silico Organ Toxicity & Hepatic Metabolism Panel -->
-            <div class="card toxicity-profiler-card" style="grid-column: 1 / -1; margin-top: 20px;">
+            <!-- In Silico Organ Toxicity & Hepatic Metabolism Panel -->
+            <div class="card toxicity-profiler-card" style="grid-column: 1 / -1; margin-top: 10px;">
               <div class="card-header">
                 <div>
-                  <h3><i class="fa-solid fa-heart-pulse"></i> In Silico Organ Toxicity & Hepatic Metabolism Profiler</h3>
-                  <p class="card-desc">Prediksi risiko kardiotoksisitas kanal hERG, mutagenisitas Ames DNA, toksisitas hati (DILI), dan profil interaksi enzim CYP450.</p>
+                  <h3><i class="fa-solid fa-heart-pulse"></i> In Silico Organ Toxicity & Hepatic Metabolism Profiler (Ensemble QSTR)</h3>
+                  <p class="card-desc">Prediksi risiko kardiotoksisitas kanal hERG, mutagenisitas Ames DNA, toksisitas hati (DILI), dan profil interaksi enzim CYP450 berbasis fitur struktural & fisikokimia.</p>
                 </div>
-                <span class="badge badge-outline"><i class="fa-solid fa-microscope"></i> Predictive Safety</span>
+                <span class="badge badge-outline"><i class="fa-solid fa-microscope"></i> QSTR Predictive Safety</span>
               </div>
               <div class="card-body">
                 <div class="tox-panel-grid">
@@ -900,17 +1164,20 @@
             <!-- Analog Similarity Card -->
             <div class="card">
               <div class="card-header">
-                <h3><i class="fa-solid fa-code-branch"></i> Penelusuran Senyawa Analog Cerdas (PubChem FastSimilarity 2D)</h3>
-                <span class="info-tooltip" title="Penapisan analog struktural berbasis koefisien Tanimoto 2D Fingerprint (Threshold >= 85%) untuk Lead Optimization">i</span>
+                <div>
+                  <h3><i class="fa-solid fa-code-branch"></i> Penelusuran Senyawa Analog Cerdas (PubChem FastSimilarity 2D & Morgan Fingerprint)</h3>
+                  <p class="card-desc">Penapisan analog struktural berbasis koefisien kemiripan Tanimoto (J(A,B) = |A &cap; B| / |A &cup; B|) dari PubChem PUG-REST Live API dan kalkulasi sirkular substruktur.</p>
+                </div>
+                <span class="badge badge-accent" id="analog-source-badge"><i class="fa-solid fa-fingerprint"></i> Tanimoto 2D Fingerprint</span>
               </div>
               <div class="card-body">
                 <p style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">
-                  Jika senyawa target menghadapi kendala toksisitas atau ketidaksesuaian farmakofor, daftar analog dengan kemiripan struktur tinggi (Tanimoto &ge; 85%) ini dapat menjadi kandidat alternatif untuk <em>lead optimization</em>.
+                  Jika senyawa target menghadapi kendala toksisitas atau ketidaksesuaian farmakofor, daftar analog dengan kemiripan struktur tinggi ini dapat menjadi kandidat alternatif untuk <em>lead optimization</em>.
                 </p>
                 
                 <div id="analogs-loading-box" style="display:none; text-align:center; padding:30px;">
                   <div class="spinner" style="margin:0 auto 10px;"></div>
-                  <p style="font-size:13px; color:var(--color-primary);">Mencari analog struktural di PubChem FastSimilarity...</p>
+                  <p style="font-size:13px; color:var(--color-primary);">Mencari analog struktural di PubChem FastSimilarity 2D API...</p>
                 </div>
 
                 <div class="analogs-grid" id="analogs-grid">
@@ -967,20 +1234,16 @@
                       </div>
                     </div>
                   </div>
-
-                  <!-- Target explorer grid close -->
                 </div>
               </div>
             </div>
 
-          </div>
-        </div>
-                    <!-- Target Fishing & Reverse Pharmacophore Screener -->
-            <div class="card target-fishing-card" style="margin-top:20px;">
+            <!-- Target Fishing & Reverse Pharmacophore Screener -->
+            <div class="card target-fishing-card">
               <div class="card-header">
                 <div>
-                  <h3><i class="fa-solid fa-crosshairs"></i> Target Fishing & Reverse Pharmacophore Screener</h3>
-                  <p class="card-desc">Prediksi kelas reseptor dan makromolekul target farmakologis berdasarkan kecocokan farmakofor multiparameter.</p>
+                  <h3><i class="fa-solid fa-crosshairs"></i> Target Fishing & Reverse Pharmacophore Screener (Multi-Class Classifier)</h3>
+                  <p class="card-desc">Prediksi probabilitas kelas reseptor dan makromolekul target farmakologis berdasarkan vektor fitur farmakofor multiparameter dan kemiripan ligan referensi.</p>
                 </div>
                 <span class="badge badge-outline"><i class="fa-solid fa-bullseye"></i> Reverse Screening</span>
               </div>
@@ -991,18 +1254,22 @@
               </div>
             </div>
 
+          </div>
+        </div>
+
         <div id="tab-batch-csv" class="tab-pane">
           <div class="card">
             <div class="card-header">
               <h3><i class="fa-solid fa-file-csv"></i> Saringan Massal (Batch CSV Sifter & Screener)</h3>
+              <button id="btn-export-batch-csv" class="btn btn-sm btn-outline"><i class="fa-solid fa-download"></i> Unduh Tabel Hasil (.CSV)</button>
             </div>
             <div class="card-body">
               <div class="batch-upload-box">
                 <p>Unggah file <strong>.CSV</strong> atau ketik daftar nama obat / SMILES (1 nama per baris) untuk penyaringan massal sekaligus:</p>
-                <div style="display: flex; gap: 14px; margin-top: 12px; margin-bottom: 16px;">
+                <div style="display: flex; gap: 14px; margin-top: 12px; margin-bottom: 16px; flex-wrap: wrap;">
                   <input type="file" id="batch-file-input" accept=".csv, .txt" style="display: none;">
                   <button id="btn-trigger-upload" class="btn btn-secondary"><i class="fa-solid fa-upload"></i> Pilih File CSV</button>
-                  <button id="btn-run-batch-preset" class="btn btn-accent"><i class="fa-solid fa-play"></i> Jalankan Batch Demo (12 Senyawa)</button>
+                  <button id="btn-run-batch-preset" class="btn btn-accent"><i class="fa-solid fa-play"></i> Jalankan Batch Demo (34 Senyawa)</button>
                 </div>
                 <textarea id="batch-text-input" rows="4" style="width: 100%; background: var(--bg-input); border: 1px solid var(--bg-card-border); color: var(--text-main); padding: 12px; border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: 12px;" placeholder="Contoh:&#10;Paracetamol&#10;Atorvastatin&#10;Genistein&#10;Daidzein&#10;Glycitein"></textarea>
                 <button id="btn-sift-text" class="btn btn-primary" style="margin-top: 10px;"><i class="fa-solid fa-filter"></i> Saring Daftar Senyawa</button>

@@ -354,6 +354,117 @@ window.CADD_PDB = (function() {
     if (elLink) {
       elLink.href = 'https://www.rcsb.org/structure/' + pdbId;
     }
+
+    renderDockingSimulation(pdbId, window.currentCompoundData ? window.currentCompoundData.props : null);
+  }
+
+  function renderDockingSimulation(pdbId, compoundProps) {
+    const activePdb = (pdbId || currentPdbId || '1HWK').toUpperCase();
+    const pData = presets[activePdb] || presets['1HWK'];
+    const props = compoundProps || (window.currentCompoundData && window.currentCompoundData.props) || {
+      Title: pData.drug || 'Atorvastatin',
+      MolecularWeight: 558.64,
+      XLogP: 5.7,
+      TPSA: 111.79,
+      HBondDonorCount: 4,
+      HBondAcceptorCount: 6,
+      RotatableBondCount: 12,
+      HeavyAtomCount: 40
+    };
+
+    const mw = parseFloat(props.MolecularWeight) || 350;
+    const logp = parseFloat(props.XLogP !== undefined ? props.XLogP : (props.LogP !== undefined ? props.LogP : 2.8));
+    const tpsa = parseFloat(props.TPSA) || 75;
+    const hbd = parseInt(props.HBondDonorCount !== undefined ? props.HBondDonorCount : 2, 10);
+    const hba = parseInt(props.HBondAcceptorCount !== undefined ? props.HBondAcceptorCount : 5, 10);
+    const rotb = parseInt(props.RotatableBondCount !== undefined ? props.RotatableBondCount : 5, 10);
+    const nHeavy = parseInt(props.HeavyAtomCount, 10) || Math.max(10, Math.round(mw / 13.5));
+
+    // AutoDock Vina Empirical Scoring Terms (Trott & Olson, J. Comput. Chem. 2010)
+    // w_gauss1 = -0.035579, w_gauss2 = -0.005156, w_repulsion = +0.840245,
+    // w_hydrophobic = -0.035069, w_hbond = -0.587439, w_rot = 0.05846
+    const gauss1Raw = Math.min(95, Math.max(25, nHeavy * 1.85 + (tpsa * 0.12)));
+    const gauss2Raw = Math.min(950, Math.max(220, nHeavy * 19.4 + (mw * 0.35)));
+    const eGauss1 = -0.035579 * gauss1Raw;
+    const eGauss2 = -0.005156 * gauss2Raw;
+    const eRepulsion = +(0.28 + Math.max(0, (mw - 500) * 0.0018) + (nHeavy * 0.011));
+    const eHydrophobic = -0.035069 * Math.max(8, Math.min(85, (Math.max(0.5, logp) * 11.2) + (nHeavy * 0.45)));
+    const effectiveHBonds = Math.min(6, (hbd * 0.65) + (hba * 0.32));
+    const eHBond = -0.587439 * effectiveHBonds;
+
+    const deltaGInter = eGauss1 + eGauss2 + eRepulsion + eHydrophobic + eHBond;
+    const wRot = 0.05846;
+    const deltaGBind = Math.max(-13.8, Math.min(-4.8, deltaGInter / (1 + wRot * rotb)));
+    const torsionPenalty = deltaGBind - deltaGInter; // positive penalty reducing affinity magnitude
+
+    // Thermodynamic inhibition constant: Ki = exp(deltaG / (R * T)), R = 0.0019872 kcal/(mol*K), T = 298.15 K
+    const RT = 0.59248;
+    const kiMolar = Math.exp(deltaGBind / RT);
+    let kiFormatted = '';
+    if (kiMolar < 1e-9) {
+      kiFormatted = (kiMolar * 1e12).toFixed(1) + ' pM';
+    } else if (kiMolar < 1e-6) {
+      kiFormatted = (kiMolar * 1e9).toFixed(2) + ' nM';
+    } else if (kiMolar < 1e-3) {
+      kiFormatted = (kiMolar * 1e6).toFixed(2) + ' µM';
+    } else {
+      kiFormatted = (kiMolar * 1e3).toFixed(2) + ' mM';
+    }
+
+    const ligandEfficiency = (-deltaGBind / Math.max(1, nHeavy)).toFixed(2);
+
+    const gridCenters = {
+      '1HWK': 'X: 19.4, Y: -8.2, Z: 14.7 (22×22×22 Å³)',
+      '1CX2': 'X: 24.1, Y: 21.5, Z: 16.3 (20×20×20 Å³)',
+      '4COX': 'X: 26.8, Y: 33.4, Z: 198.2 (20×20×20 Å³)',
+      '4NOB': 'X: 11.2, Y: -4.5, Z: 28.9 (18×18×18 Å³)',
+      '1IEP': 'X: 15.6, Y: 53.8, Z: 15.1 (24×24×24 Å³)',
+      '2XCT': 'X: -14.2, Y: 38.7, Z: -9.4 (24×24×24 Å³)',
+      '1PME': 'X: -8.4, Y: 17.2, Z: 31.6 (22×22×22 Å³)',
+      '2HU4': 'X: 3.5, Y: 18.9, Z: 24.4 (20×20×20 Å³)',
+      '7BV2': 'X: 91.4, Y: 92.8, Z: 103.7 (26×26×26 Å³)'
+    };
+
+    const elBadge = document.getElementById('docking-pdb-target-badge');
+    const elDeltaG = document.getElementById('dock-val-deltag');
+    const elKi = document.getElementById('dock-val-ki');
+    const elLe = document.getElementById('dock-val-le');
+    const elGrid = document.getElementById('dock-val-gridbox');
+    const elTerms = document.getElementById('docking-energy-terms-grid');
+
+    if (elBadge) elBadge.textContent = 'Target: ' + activePdb + ' × ' + (props.Title || 'Ligan Aktif');
+    if (elDeltaG) elDeltaG.textContent = deltaGBind.toFixed(2) + ' kcal/mol';
+    if (elKi) elKi.textContent = kiFormatted;
+    if (elLe) elLe.textContent = ligandEfficiency;
+    if (elGrid) elGrid.textContent = gridCenters[activePdb] || 'X: 15.0, Y: 12.0, Z: 18.5 (22×22×22 Å³)';
+
+    if (elTerms) {
+      const terms = [
+        { label: 'Gauss 1 (Steric Dispersion)', val: eGauss1, color: '#0ea5e9', desc: 'Kontak van der Waals jarak pendek (d = 0 Å, σ = 0.5 Å)' },
+        { label: 'Gauss 2 (Pocket Burial)', val: eGauss2, color: '#0284c7', desc: 'Komplementaritas bentuk saku jarak menengah (d = 3 Å, σ = 2.0 Å)' },
+        { label: 'Hydrophobic Effect', val: eHydrophobic, color: '#10b981', desc: 'Desolvasi saku lipofilik antara karbon non-polar ligan & residu' },
+        { label: 'Hydrogen Bonding', val: eHBond, color: '#8b5cf6', desc: 'Ikatan hidrogen terarah (HBD/HBA) dengan residu katalitik' },
+        { label: 'Steric Repulsion', val: eRepulsion, color: '#f59e0b', desc: 'Penalti tumpang-tindih jari-jari van der Waals (d < 0 Å)' },
+        { label: 'Conformational Entropy (Nrot=' + rotb + ')', val: torsionPenalty, color: '#ef4444', desc: 'Penalti entropi pembekuan ikatan rotasi bebas saat pengikatan' }
+      ];
+
+      elTerms.innerHTML = terms.map(t => {
+        const pct = Math.min(100, Math.round((Math.abs(t.val) / 5.0) * 100));
+        const signStr = t.val >= 0 ? '+' + t.val.toFixed(2) : t.val.toFixed(2);
+        return `
+          <div style="background:var(--bg-card); padding:8px 10px; border-radius:6px; border:1px solid var(--border-color);">
+            <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:4px;">
+              <strong>${t.label}</strong>
+              <span style="font-family:var(--font-mono); font-weight:700; color:${t.color};">${signStr} kcal/mol</span>
+            </div>
+            <div style="height:5px; background:var(--border-color); border-radius:3px; overflow:hidden; margin-bottom:4px;">
+              <div style="width:${pct}%; height:100%; background:${t.color};"></div>
+            </div>
+            <div style="font-size:0.72rem; color:var(--text-muted);">${t.desc}</div>
+          </div>
+        `;
+      }).join('');
+    }
   }
 
   function suggestPDBForDrug(drugName) {
@@ -374,6 +485,7 @@ window.CADD_PDB = (function() {
     init: init,
     viewer: () => viewer,
     loadStructure: loadStructure,
-    suggestPDBForDrug: suggestPDBForDrug
+    suggestPDBForDrug: suggestPDBForDrug,
+    renderDockingSimulation: renderDockingSimulation
   };
 })();

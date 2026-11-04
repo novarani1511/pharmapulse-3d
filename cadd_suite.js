@@ -73,6 +73,8 @@
           const sel = document.getElementById('pdb-select-preset');
           if (sel) sel.value = suggested;
           window.CADD_PDB.loadStructure(suggested);
+        } else if (typeof window.CADD_PDB.renderDockingSimulation === 'function') {
+          window.CADD_PDB.renderDockingSimulation(undefined, p);
         }
       } catch (e) { console.warn('PDB err:', e); }
     }

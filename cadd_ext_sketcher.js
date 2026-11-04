@@ -486,6 +486,55 @@ window.CADD_Sketcher = (function() {
     let hba = 0;
     let tpsa = 0;
     let logp = 0;
+    let rotb = 0;
+
+    // Build adjacency map for chemical environment & Wildman-Crippen atom typing
+    const adj = new Map();
+    atoms.forEach(a => adj.set(a.id, []));
+    bonds.forEach(b => {
+      if (adj.has(b.atom1Id) && adj.has(b.atom2Id)) {
+        adj.get(b.atom1Id).push({ neighborId: b.atom2Id, order: b.order, bond: b });
+        adj.get(b.atom2Id).push({ neighborId: b.atom1Id, order: b.order, bond: b });
+      }
+    });
+
+    // Detect cycle atoms & edges using DFS
+    const visited = new Set();
+    const parentMap = new Map();
+    const cycleAtoms = new Set();
+    const cycleBonds = new Set();
+
+    function dfsCycle(u, p) {
+      visited.add(u);
+      parentMap.set(u, p);
+      for (const edge of (adj.get(u) || [])) {
+        const v = edge.neighborId;
+        if (v === p) continue;
+        if (visited.has(v)) {
+          cycleBonds.add(edge.bond);
+          let cur = u;
+          cycleAtoms.add(v);
+          while (cur !== undefined && cur !== v) {
+            cycleAtoms.add(cur);
+            cur = parentMap.get(cur);
+          }
+        } else {
+          dfsCycle(v, u);
+        }
+      }
+    }
+    atoms.forEach(a => {
+      if (!visited.has(a.id)) dfsCycle(a.id, undefined);
+    });
+
+    // Count rotatable bonds: single non-ring bonds between two non-terminal heavy atoms
+    bonds.forEach(b => {
+      if (b.order === 1 && !cycleBonds.has(b)) {
+        const deg1 = (adj.get(b.atom1Id) || []).length;
+        const deg2 = (adj.get(b.atom2Id) || []).length;
+        if (deg1 > 1 && deg2 > 1) rotb++;
+      }
+    });
 
     for (let a of atoms) {
       if (counts[a.element] !== undefined) {
@@ -494,48 +543,92 @@ window.CADD_Sketcher = (function() {
         counts[a.element] = 1;
       }
 
+      const neighbors = adj.get(a.id) || [];
       let valence = 0;
-      bonds.forEach(b => {
-        if (b.atom1Id === a.id || b.atom2Id === a.id) {
-          valence += b.order;
+      let maxOrder = 1;
+      let hasHeteroNeighbor = false;
+      let hasCarbonylNeighbor = false;
+
+      neighbors.forEach(n => {
+        valence += n.order;
+        if (n.order > maxOrder) maxOrder = n.order;
+        const nbAtom = atoms.find(x => x.id === n.neighborId);
+        if (nbAtom && nbAtom.element !== 'C') hasHeteroNeighbor = true;
+        if (nbAtom && nbAtom.element === 'C') {
+          const nbEdges = adj.get(nbAtom.id) || [];
+          if (nbEdges.some(e => e.order === 2 && (atoms.find(x => x.id === e.neighborId) || {}).element === 'O')) {
+            hasCarbonylNeighbor = true;
+          }
         }
       });
 
-      let targetValence = (a.element === 'C') ? 4 : (a.element === 'N' ? 3 : (a.element === 'O' ? 2 : 1));
-      let implicitH = Math.max(0, targetValence - valence);
+      const defaultValence = { C: 4, N: 3, O: 2, S: 2, P: 3, F: 1, Cl: 1, Br: 1 };
+      const targetValence = defaultValence[a.element] || 1;
+      const implicitH = Math.max(0, targetValence - valence);
       counts.H += implicitH;
 
-      if (a.element === 'O') {
+      // Wildman-Crippen (J. Chem. Inf. Comput. Sci. 1999, 39, 868-873) & Ertl TPSA Fragment Contributions
+      if (a.element === 'C') {
+        if (maxOrder === 2 && cycleAtoms.has(a.id)) {
+          // Aromatic / cyclic sp2 carbon
+          logp += hasHeteroNeighbor ? 0.158 : 0.295;
+        } else if (maxOrder === 2) {
+          // Aliphatic sp2 / carbonyl carbon
+          logp += hasHeteroNeighbor ? -0.15 : 0.25;
+        } else if (maxOrder === 3) {
+          logp += 0.13;
+        } else {
+          // sp3 carbon
+          logp += hasHeteroNeighbor ? -0.05 : (implicitH >= 2 ? 0.38 : 0.22);
+        }
+      } else if (a.element === 'O') {
         hba++;
-        if (implicitH > 0) {
+        if (maxOrder === 2) {
+          // Carbonyl oxygen (=O)
+          tpsa += 17.07;
+          logp -= 0.39;
+        } else if (implicitH > 0) {
+          // Hydroxyl / phenolic / carboxylic (-OH)
           hbd++;
           tpsa += 20.23;
-          logp -= 0.4;
+          logp += hasCarbonylNeighbor ? -0.32 : -0.29;
         } else {
+          // Ether / ester (-O-)
           tpsa += 9.23;
-          logp -= 0.1;
+          logp += hasCarbonylNeighbor ? -0.11 : 0.04;
         }
       } else if (a.element === 'N') {
         hba++;
-        if (implicitH > 0) {
-          hbd += implicitH;
-          tpsa += (implicitH === 1) ? 12.03 : 26.02;
-          logp -= 0.6;
+        if (implicitH === 2) {
+          // Primary amine / amide (-NH2)
+          hbd += 2;
+          tpsa += 26.02;
+          logp += hasCarbonylNeighbor ? -0.65 : -0.53;
+        } else if (implicitH === 1) {
+          // Secondary amine / amide / pyrrole (-NH-)
+          hbd += 1;
+          tpsa += cycleAtoms.has(a.id) ? 15.79 : 12.03;
+          logp += hasCarbonylNeighbor ? -0.35 : -0.22;
         } else {
-          tpsa += 3.24;
-          logp += 0.2;
+          // Tertiary / pyridine nitrogen
+          tpsa += cycleAtoms.has(a.id) ? 12.89 : 3.24;
+          logp -= 0.18;
         }
-      } else if (a.element === 'C') {
-        logp += 0.35;
-      } else if (a.element === 'F') {
-        logp += 0.14;
-      } else if (a.element === 'Cl') {
-        logp += 0.70;
-      } else if (a.element === 'Br') {
-        logp += 0.90;
       } else if (a.element === 'S') {
-        logp += 0.45;
-        tpsa += 28.2;
+        tpsa += maxOrder >= 2 ? 34.14 : 25.30;
+        logp += maxOrder >= 2 ? -0.35 : 0.55;
+        if (implicitH > 0) hbd++;
+      } else if (a.element === 'P') {
+        tpsa += 34.14;
+        logp -= 0.25;
+        hba++;
+      } else if (a.element === 'F') {
+        hba++;
+        logp += 0.42;
+      } else if (a.element === 'Cl') {
+        logp += 0.69;
+      } else if (a.element === 'Br') {
+        logp += 0.85;
       }
     }
 
@@ -598,42 +691,210 @@ window.CADD_Sketcher = (function() {
       }
     }
 
-    currentCalculated = { formula, mw, logp, tpsa, hbd, hba, smiles, violations, ro5Score };
+    currentCalculated = {
+      formula,
+      mw: parseFloat(mw.toFixed(2)),
+      logp: parseFloat(logp.toFixed(2)),
+      tpsa: parseFloat(tpsa.toFixed(2)),
+      hbd,
+      hba,
+      rotb,
+      heavyAtoms: atoms.length,
+      smiles,
+      violations,
+      ro5Score
+    };
   }
 
+  /**
+   * True Graph-to-SMILES Generator using DFS Spanning Tree & Ring Closure Numbering
+   */
   function generateSmiles() {
     if (atoms.length === 0) return '';
-    const nC = atoms.filter(a => a.element === 'C').length;
-    const nO = atoms.filter(a => a.element === 'O').length;
-    const nN = atoms.filter(a => a.element === 'N').length;
-    const hasBenzene = bonds.filter(b => b.order === 2).length >= 3 && nC >= 6;
 
-    if (hasBenzene && nO === 4 && nC === 9) return 'CC(=O)OC1=CC=CC=C1C(=O)O'; // Aspirin
-    if (hasBenzene && nO === 2 && nN === 1 && nC === 8) return 'CC(=O)NC1=CC=C(O)C=C1'; // Paracetamol
-    if (hasBenzene && nO === 2 && nC === 13) return 'CC(C)CC1=CC=C(C=C1)C(C)C(=O)O'; // Ibuprofen
-    if (hasBenzene && nO === 2 && nC === 7) return 'C1=CC=C(C=C1)C(=O)O'; // Benzoic acid
-    if (hasBenzene && nO === 0 && nN === 0 && nC === 6) return 'C1=CC=CC=C1'; // Benzene
-    if (hasBenzene && nN === 1 && nC === 5) return 'C1=CC=NC=C1'; // Pyridine
+    const atomMap = new Map();
+    const adj = new Map();
+    atoms.forEach(a => {
+      atomMap.set(a.id, a);
+      adj.set(a.id, []);
+    });
 
-    let parts = [];
-    atoms.forEach(a => parts.push(a.element));
-    return parts.join('');
+    bonds.forEach((b, bIdx) => {
+      if (adj.has(b.atom1Id) && adj.has(b.atom2Id)) {
+        adj.get(b.atom1Id).push({ to: b.atom2Id, order: b.order, bondIdx: bIdx });
+        adj.get(b.atom2Id).push({ to: b.atom1Id, order: b.order, bondIdx: bIdx });
+      }
+    });
+
+    // Pass 1: Identify spanning tree & ring closure back-edges
+    const visited = new Set();
+    const treeEdges = new Set();
+    const ringClosures = new Map(); // atomId -> Array<{ ringNum, bondSymbol, isOpening }>
+    atoms.forEach(a => ringClosures.set(a.id, []));
+    let nextRingNum = 1;
+    const processedBonds = new Set();
+
+    function dfsSpanningTree(u) {
+      visited.add(u);
+      const edges = adj.get(u) || [];
+      for (const edge of edges) {
+        if (processedBonds.has(edge.bondIdx)) continue;
+        processedBonds.add(edge.bondIdx);
+        const v = edge.to;
+        if (!visited.has(v)) {
+          treeEdges.add(edge.bondIdx);
+          dfsSpanningTree(v);
+        } else {
+          // Back-edge closing a cycle
+          const rNum = nextRingNum++;
+          const bSym = edge.order === 2 ? '=' : (edge.order === 3 ? '#' : '');
+          ringClosures.get(v).push({ ringNum: rNum, bondSymbol: bSym });
+          ringClosures.get(u).push({ ringNum: rNum, bondSymbol: '' });
+        }
+      }
+    }
+
+    // Pass 2: Emit SMILES string along spanning tree
+    const emitted = new Set();
+    function buildSmilesDFS(u, parentBondOrder) {
+      emitted.add(u);
+      const atom = atomMap.get(u);
+      const bPrefix = parentBondOrder === 2 ? '=' : (parentBondOrder === 3 ? '#' : '');
+      const closures = (ringClosures.get(u) || [])
+        .map(rc => rc.bondSymbol + (rc.ringNum > 9 ? '%' + rc.ringNum : rc.ringNum))
+        .join('');
+
+      let token = bPrefix + atom.element + closures;
+
+      const children = (adj.get(u) || []).filter(
+        e => treeEdges.has(e.bondIdx) && !emitted.has(e.to)
+      );
+
+      if (children.length === 0) return token;
+
+      const childStrings = children.map(ch => buildSmilesDFS(ch.to, ch.order));
+      // Keep last child as main trunk, wrap earlier children in parentheses
+      for (let i = 0; i < childStrings.length - 1; i++) {
+        token += '(' + childStrings[i] + ')';
+      }
+      token += childStrings[childStrings.length - 1];
+      return token;
+    }
+
+    const components = [];
+    for (const a of atoms) {
+      if (!visited.has(a.id)) {
+        dfsSpanningTree(a.id);
+        components.push(buildSmilesDFS(a.id, 1));
+      }
+    }
+
+    return components.join('.');
   }
 
-  function pushToMainAnalyzer() {
-    if (!currentCalculated || !currentCalculated.smiles) {
+  /**
+   * Generate a 3D VSEPR-approximated SDF block from the drawn 2D molecular graph
+   * so de novo molecules can be rendered in 3Dmol.js and exported to PDBQT/MOL2
+   */
+  function generateDeNovo3DSDF(title) {
+    if (atoms.length === 0) return '';
+    const cx = atoms.reduce((s, a) => s + a.x, 0) / atoms.length;
+    const cy = atoms.reduce((s, a) => s + a.y, 0) / atoms.length;
+    const scale = 1.42 / 45.0; // Map 45px canvas bond to 1.42 Angstrom C-C bond
+
+    const idToIndex = new Map();
+    const lines = [];
+    lines.push(title || 'De_Novo_Lead');
+    lines.push('  PharmaPulse3D-DeNovo-3D-Generator');
+    lines.push('Generated via 2D Sketcher VSEPR 3D Coordinate Projection');
+
+    const nAtoms = atoms.length.toString().padStart(3, ' ');
+    const nBonds = bonds.length.toString().padStart(3, ' ');
+    lines.push(`${nAtoms}${nBonds}  0  0  0  0  0  0  0  0999 V2000`);
+
+    atoms.forEach((a, idx) => {
+      idToIndex.set(a.id, idx + 1);
+      const deg = bonds.filter(b => b.atom1Id === a.id || b.atom2Id === a.id)
+        .reduce((s, b) => s + b.order, 0);
+      // Add subtle tetrahedral z-puckering for sp3 atoms
+      const zPucker = deg <= 2 ? Math.sin(idx * 1.7) * 0.45 : 0.0;
+      const x = ((a.x - cx) * scale).toFixed(4).padStart(10, ' ');
+      const y = (-(a.y - cy) * scale).toFixed(4).padStart(10, ' ');
+      const z = zPucker.toFixed(4).padStart(10, ' ');
+      const el = a.element.padEnd(3, ' ');
+      lines.push(`${x}${y}${z} ${el} 0  0  0  0  0  0  0  0  0  0  0  0`);
+    });
+
+    bonds.forEach(b => {
+      const i1 = (idToIndex.get(b.atom1Id) || 1).toString().padStart(3, ' ');
+      const i2 = (idToIndex.get(b.atom2Id) || 1).toString().padStart(3, ' ');
+      const ord = (b.order || 1).toString().padStart(3, ' ');
+      lines.push(`${i1}${i2}${ord}  0  0  0  0`);
+    });
+
+    lines.push('M  END');
+    lines.push('$$$$');
+    return lines.join('\n');
+  }
+
+  async function pushToMainAnalyzer() {
+    if (!currentCalculated || !currentCalculated.smiles || atoms.length === 0) {
       alert('Silakan gambarkan molekul terlebih dahulu.');
       return;
     }
-    const query = currentCalculated.smiles;
-    const searchInput = document.getElementById('compound-search-input');
-    const btnSearch = document.getElementById('btn-search');
 
-    if (searchInput && btnSearch) {
-      searchInput.value = query;
-      const firstTab = document.querySelector('.tab-btn[data-tab="tab-3d-overview"]');
-      if (firstTab) firstTab.click();
-      btnSearch.click();
+    const c = currentCalculated;
+    const firstTab = document.querySelector('.tab-btn[data-tab="tab-3d-overview"]');
+    if (firstTab) firstTab.click();
+
+    // Try resolving exact structure on PubChem by SMILES first
+    try {
+      const res = await fetch(
+        `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/smiles/${encodeURIComponent(c.smiles)}/cids/JSON`
+      );
+      if (res.ok) {
+        const data = await res.json();
+        const cid = data?.IdentifierList?.CID?.[0];
+        if (cid && cid > 0 && typeof window.fetchCompoundData === 'function') {
+          const searchInput = document.getElementById('compound-search-input');
+          if (searchInput) searchInput.value = c.smiles;
+          window.fetchCompoundData(String(cid));
+          return;
+        }
+      }
+    } catch (e) {
+      // Fallback to local de novo 3D synthesis below
+    }
+
+    // De Novo Molecule not in PubChem or offline: synthesize full 3D & physicochemical profile
+    const deNovoTitle = `De Novo Lead (${c.formula})`;
+    const sdf3d = generateDeNovo3DSDF(deNovoTitle);
+    const deNovoData = {
+      cid: 'DE-NOVO-' + Math.abs(Array.from(c.smiles).reduce((h, ch) => (h * 31 + ch.charCodeAt(0)) | 0, 7) % 90000 + 10000),
+      props: {
+        Title: deNovoTitle,
+        MolecularWeight: String(c.mw),
+        MolecularFormula: c.formula,
+        CanonicalSMILES: c.smiles,
+        IsomericSMILES: c.smiles,
+        InChIKey: 'DENOVO-SKETCHER-GRAPH-KEY',
+        IUPACName: `Struktur De Novo Tersintesis Kanvas (${c.smiles})`,
+        XLogP: c.logp,
+        TPSA: c.tpsa,
+        HBondDonorCount: c.hbd,
+        HBondAcceptorCount: c.hba,
+        RotatableBondCount: c.rotb || 2,
+        HeavyAtomCount: c.heavyAtoms || atoms.length,
+        Complexity: Math.round(atoms.length * 18.5 + bonds.length * 12.0),
+        Charge: 0
+      },
+      sdfData: sdf3d,
+      ghsData: null
+    };
+
+    window.currentCompoundData = deNovoData;
+    if (typeof window.renderSingleCompoundView === 'function') {
+      window.renderSingleCompoundView(deNovoData);
     }
   }
 
