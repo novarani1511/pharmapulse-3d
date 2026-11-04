@@ -260,7 +260,7 @@
           Platform CADD & In Silico Screening Terintegrasi Berbasis PubChem PUG-REST API Live
         </div>
         <p class="main-hero-desc">
-          Solusi terintegrasi untuk visualisasi konformer 3D molekul, pemetaan farmakofor 3D, pengukuran jarak atom (&Aring;), model prediksi BOILED-Egg (HIA & Sawar Darah Otak), evaluasi druglikeness Lipinski RO5, kemudahan sintesis (SA Score), serta penapisan analog Tanimoto similarity.
+          Solusi terintegrasi untuk visualisasi konformer 3D molekul, pemetaan farmakofor 3D, pengukuran jarak atom (&Aring;), model prediksi BOILED-Egg (HIA & Sawar Darah Otak), evaluasi druglikeness Lipinski RO5, kemudahan sintesis (SA Score), simulasi Molecular Docking AutoDock Vina, serta penapisan analog Tanimoto similarity.
         </p>
         <div class="author-badge">
           <i class="fa-solid fa-user-graduate"></i>
@@ -282,18 +282,18 @@
       <div class="slide-body grid-3">
         <div class="info-card">
           <h4><i class="fa-solid fa-triangle-exclamation"></i> Krisis Biaya & Attrition Rate</h4>
-          <p>Riset obat baru menelan biaya rata-rata .6 Miliar dengan durasi 10-15 tahun per molekul lolos.</p>
+          <p>Riset obat baru menelan biaya rata-rata USD 2.6 Miliar dengan durasi 10-15 tahun per molekul lolos.</p>
           <p>Tingkat kegagalan fase klinis mencapai >90%, di mana sebagian besar disebabkan oleh profil farmakokinetik & ADMET yang buruk, bukan karena afinitas reseptor.</p>
         </div>
         <div class="info-card">
           <h4 class="warning"><i class="fa-solid fa-lock"></i> Keterbatasan Software CADD</h4>
-          <p>Software CADD profesional (seperti MOE, Schrodinger, Discovery Studio) memiliki lisensi berbayar sangat mahal.</p>
+          <p>Software CADD profesional (seperti MOE, Schr&ouml;dinger, Discovery Studio) memiliki lisensi berbayar sangat mahal.</p>
           <p>Memerlukan workstation Linux berat dan sulit diakses oleh mahasiswa atau akademisi di laboratorium berkembang.</p>
         </div>
         <div class="info-card">
           <h4 class="success"><i class="fa-solid fa-lightbulb"></i> Solusi PharmaPulse 3D</h4>
           <p>Platform web zero-installation yang sepenuhnya gratis, open-access, dan responsif.</p>
-          <p>Menghubungkan data live PubChem NLM/NIH dengan algoritma CADD industri mutakhir langsung di browser.</p>
+          <p>Menghubungkan data live PubChem NLM/NIH, ChEMBL, RCSB PDB, dan openFDA dengan algoritma CADD industri mutakhir langsung di browser.</p>
         </div>
       </div>
       <div class="slide-footer">
@@ -311,11 +311,11 @@
       <div class="slide-body grid-3">
         <div class="info-card">
           <h4><i class="fa-solid fa-cloud-arrow-down"></i> 1. Live Data Ingestion</h4>
-          <p>Query asinkron ke PubChem PUG-REST API (NIH/NLM) tanpa batasan API Key.</p>
+          <p>Query asinkron ke PubChem PUG-REST API (NIH/NLM), RCSB PDB, & openFDA:</p>
           <ul>
             <li>Pengambilan CID, IUPAC, SMILES, dan InChIKey.</li>
             <li>Ekstraksi koordinat 3D SDF Conformer & 15+ deskriptor fisikokimia.</li>
-            <li>Cache presisi fallback untuk stabilitas akses offline.</li>
+            <li>34 database senyawa terkurasi untuk stabilitas akses offline 100%.</li>
           </ul>
         </div>
         <div class="info-card">
@@ -324,7 +324,7 @@
           <ul>
             <li>Evaluasi Lipinski RO5, Veber, Ghose, & Pfizer 3/75.</li>
             <li>Model BOILED-Egg (WLogP vs TPSA) & P-gp substrate.</li>
-            <li>Synthetic Accessibility Score (SA Score 1-10).</li>
+            <li>Dekonvolusi skor empiris AutoDock Vina (&Delta;G<sub>bind</sub> kcal/mol) & muatan parsial Gasteiger-Marsili.</li>
             <li>Regresi QSAR pIC50 ChEMBL & Radar SwissADME.</li>
           </ul>
         </div>
@@ -332,10 +332,9 @@
           <h4 class="success"><i class="fa-solid fa-desktop"></i> 3. Interaktif & Output</h4>
           <p>Tampilan visualisasi tingkat tinggi:</p>
           <ul>
-            <li>Viewport 3Dmol.js WebGL (rotasi 360°, zoom, rendering styles).</li>
-            <li>Overlay Farmakofor 3D & alat ukur jarak ikatan (&Aring;).</li>
-            <li>Pencarian analog FastSimilarity 2D.</li>
-            <li>Ekspor dokumen PDF Dossier cetak bersih.</li>
+            <li>Viewport 3Dmol.js WebGL (rotasi 360&deg;, zoom, surface & protein target PDB).</li>
+            <li>Overlay Farmakofor 3D, Sketcher 2D/3D SMILES & alat ukur jarak ikatan (&Aring;).</li>
+            <li>Ekspor berkas AutoDock Vina (<code>.pdbqt</code>), Sybyl (<code>.mol2</code>), CSV, & PDF Dossier.</li>
           </ul>
         </div>
       </div>
@@ -391,7 +390,7 @@
           <p>Korelasi kuantitatif sifat struktur molekul terhadap afinitas biologis:</p>
           <ul>
             <li>Plot regresi linier bioaktivitas: pIC50 = -log10(IC50) vs LogP.</li>
-            <li>Persamaan otomatis y = mx + c dengan R&sup2; > 0.8.</li>
+            <li>Persamaan otomatis y = mx + c dengan R&sup2; > 0.8 & evaluasi Applicability Domain (leverage h*).</li>
             <li>Tabel perbandingan seri analog acuan ChEMBL.</li>
           </ul>
         </div>
@@ -400,8 +399,8 @@
           <p>Radar heksagonal terstandar Swiss Institute of Bioinformatics:</p>
           <ul>
             <li>LIPO (Lipofilitas) & SIZE (Ukuran Molekul).</li>
-            <li>POLAR (Polaritas TPSA) & INSOLU (Kelarutan).</li>
-            <li>FLEX (Fleksibilitas RotB) & INSATU (Saturasi sp3).</li>
+            <li>POLAR (Polaritas TPSA) & INSOLU (Kelarutan ESOL LogS).</li>
+            <li>FLEX (Fleksibilitas RotB) & INSATU (Saturasi Fsp3).</li>
           </ul>
         </div>
         <div class="info-card">
@@ -423,27 +422,26 @@
     <!-- Slide 6: Inovasi 3D CADD Farmakofor & Ukur Ikatan -->
     <div class="slide">
       <div class="slide-header">
-        <span class="slide-tag">INOVASI CADD 3D TINGKAT LANJUT</span>
-        <h2 class="slide-title">5. 3D Pharmacophore Mapping & Alat Ukur Jarak Atom (&Aring;)</h2>
+        <span class="slide-tag">INOVASI CADD 3D & DOCKING</span>
+        <h2 class="slide-title">5. 3D Pharmacophore, Molecular Docking & Alat Ukur Jarak (&Aring;)</h2>
       </div>
       <div class="slide-body grid-2">
         <div class="info-card">
-          <h4><i class="fa-solid fa-bullseye"></i> 3D Pharmacophore Feature Mapping</h4>
-          <p>Visualisasi spasial bola transparan pada konformer 3D molekul:</p>
+          <h4><i class="fa-solid fa-bullseye"></i> 3D Pharmacophore & AutoDock Vina Scoring</h4>
+          <p>Visualisasi spasial bola farmakofor & simulasi energi penambatan ligan-reseptor:</p>
           <ul>
-            <li><strong style="color:#ef4444;">🔴 Bola Merah (HBA):</strong> Menandai akseptor ikatan hidrogen (atom Oksigen & Nitrogen non-protonasi).</li>
-            <li><strong style="color:#3b82f6;">🔵 Bola Biru (HBD):</strong> Menandai donor ikatan hidrogen aktif (gugus hidroksil -OH dan amina -NH).</li>
-            <li><strong style="color:#f59e0b;">🟡 Bola Kuning (Aromatic/Hydrophobic):</strong> Menandai cincin aromatik dan gugus lipofilik pengikat kantung hidrofobik.</li>
+            <li><strong style="color:#ef4444;">🔴 Bola Merah (HBA) & 🔵 Biru (HBD):</strong> Pemetaan donor/akseptor ikatan hidrogen & cincin aromatik kuning.</li>
+            <li><strong>Dekonvolusi Termodinamika Vina:</strong> Menghitung &Delta;G<sub>bind</sub> (kcal/mol), konstanta inhibisi K<sub>i</sub>, dan Ligand Efficiency (LE) pada kantung aktif RCSB PDB.</li>
+            <li><strong>Konverter PDBQT:</strong> Perhitungan muatan parsial iteratif Gasteiger-Marsili (PEOE) untuk ekspor AutoDock Vina.</li>
           </ul>
-          <p>Memungkinkan analisis farmakofor interaktif langsung di viewer WebGL.</p>
         </div>
         <div class="info-card">
-          <h4 class="success"><i class="fa-solid fa-ruler-combined"></i> Alat Ukur Jarak & Sudut Ikatan 3D</h4>
+          <h4 class="success"><i class="fa-solid fa-ruler-combined"></i> Alat Ukur Jarak (&Aring;), Sudut (&deg;) & Sketcher 2D/3D</h4>
           <p>Fitur presisi tinggi layaknya software CADD industri:</p>
           <ul>
-            <li><strong>Pengukuran Jarak Euclidean (&Aring;):</strong> Klik atom 1 dan atom 2 secara berurutan untuk menghitung jarak riil d = &radic;(dx&sup2;+dy&sup2;+dz&sup2;) dalam satuan &Aring;ngstr&ouml;m.</li>
+            <li><strong>Pengukuran Jarak Euclidean (&Aring;):</strong> Klik atom 1 dan atom 2 untuk menghitung jarak riil d = &radic;(dx&sup2;+dy&sup2;+dz&sup2;) dalam satuan &Aring;ngstr&ouml;m.</li>
             <li><strong>Pengukuran Sudut Ikatan (&deg;):</strong> Klik atom ke-3 untuk menghitung sudut ikatan via vector dot product &theta; = arccos(u&middot;v / |u||v|).</li>
-            <li>Garis silinder 3D & badge visual interaktif secara langsung.</li>
+            <li><strong>2D/3D Chemical Sketcher:</strong> Menggambar molekul secara interaktif dengan generator SMILES dan relaksasi geometri 3D VSEPR.</li>
           </ul>
         </div>
       </div>
@@ -514,7 +512,7 @@
             <li>Koefisien Partisi (LogP): -3.5 s/d +3.5.</li>
             <li>Ikatan Fleksibel (RotB): &le; 7.</li>
           </ul>
-          <p>Memberikan ruang modifikasi struktur (SAR) tanpa melanggar batas akhir aturan Lipinski RO5.</p>
+          <p>Memberikan ruang modifikasi struktur (SAR) & penggantian bioisoster tanpa melanggar batas akhir aturan Lipinski RO5.</p>
         </div>
       </div>
       <div class="slide-footer">
@@ -555,40 +553,40 @@
     <!-- Slide 10: Target & Drug Repurposing -->
     <div class="slide">
       <div class="slide-header">
-        <span class="slide-tag">FARMAKOLOGI MOLEKULER</span>
-        <h2 class="slide-title">9. Target Biologis, Jalur Sinyal & Drug Repurposing</h2>
+        <span class="slide-tag">FARMAKOLOGI MOLEKULER & FARMAKOVIGILANS</span>
+        <h2 class="slide-title">9. Target Biologis, Jalur Sinyal, Repurposing & openFDA</h2>
       </div>
       <div class="slide-body grid-3">
         <div class="info-card">
-          <h4><i class="fa-solid fa-dna"></i> Pemetaan Target Primer</h4>
-          <p>Integrasi target makromolekul enzim dan reseptor biologis:</p>
+          <h4><i class="fa-solid fa-dna"></i> Pemetaan Target Primer & PDB 3D</h4>
+          <p>Integrasi target makromolekul kristalografi RCSB PDB:</p>
           <ul>
-            <li>HMG-CoA Reductase (Atorvastatin).</li>
-            <li>COX-1 / COX-2 (Aspirin, Ibuprofen, Paracetamol).</li>
-            <li>Penicillin-Binding Proteins / PBP (Amoxicillin).</li>
-            <li>Bacterial DNA Gyrase (Ciprofloxacin).</li>
+            <li>HMG-CoA Reductase (1HWK - Atorvastatin).</li>
+            <li>COX-1 / COX-2 (4COX - Aspirin, Ibuprofen).</li>
+            <li>Neuraminidase Influenza (2HU4 - Oseltamivir).</li>
+            <li>SARS-CoV-2 RdRp (7BV2 - Remdesivir).</li>
           </ul>
         </div>
         <div class="info-card">
-          <h4 class="secondary"><i class="fa-solid fa-network-wired"></i> Jalur Sinyal Biologis</h4>
-          <p>Menghubungkan struktur kimia dengan mekanisme seluler:</p>
+          <h4 class="secondary"><i class="fa-solid fa-network-wired"></i> Jalur Sinyal & CYP450</h4>
+          <p>Menghubungkan struktur kimia dengan metabolisme seluler:</p>
           <ul>
-            <li>KEGG Pathway (hsa00900, hsa00590).</li>
-            <li>Reactome Pathway (R-HSA ID).</li>
-            <li>Klasifikasi WHO ATC Code (Anatomical Therapeutic Chemical).</li>
+            <li>KEGG Pathway, Reactome, & klasifikasi WHO ATC Code.</li>
+            <li>Prediksi substrat/inhibitor sitokrom P450 (CYP3A4, CYP2D6, CYP2C9) & risiko DDI.</li>
+            <li>Prediksi toksisitas hERG, hepatotoksisitas DILI, dan Ames mutagenicity.</li>
           </ul>
         </div>
         <div class="info-card">
-          <h4 class="success"><i class="fa-solid fa-lightbulb"></i> Hipotesis Drug Repurposing</h4>
-          <p>Eksplorasi indikasi baru obat lama:</p>
+          <h4 class="success"><i class="fa-solid fa-shield-heart"></i> Farmakovigilans openFDA (FAERS)</h4>
+          <p>Data keamanan klinis dunia nyata (Real-World Evidence):</p>
           <ul>
-            <li>Modulasi isoprenoid statin untuk anti-inflamasi vaskular dan adjuvan onkologi.</li>
-            <li>Efek proteksi kemopreventif adenokarsinoma kolorektal oleh asetilsalisilat.</li>
+            <li>Integrasi langsung dengan API US FDA Adverse Event Reporting System.</li>
+            <li>Deteksi sinyal disproporsionalitas PRR (Proportional Reporting Ratio).</li>
           </ul>
         </div>
       </div>
       <div class="slide-footer">
-        <span>PharmaPulse 3D | Target Biologis & Repurposing</span>
+        <span>PharmaPulse 3D | Target Biologis & Farmakovigilans</span>
         <span>Slide 10 / 12</span>
       </div>
     </div>
@@ -643,16 +641,16 @@
         </div>
         <div class="grid-3" style="margin-bottom: 25px;">
           <div class="info-card">
-            <h4><i class="fa-solid fa-circle-check"></i> 7 Pilar Inovasi Lengkap</h4>
-            <p>Berhasil mengintegrasikan Farmakofor 3D, Pengukuran Jarak Atom, Model BOILED-Egg, SA Score, Tanimoto Analog, Drug Repurposing, dan Publication Dossier.</p>
+            <h4><i class="fa-solid fa-circle-check"></i> Ekosistem CADD Terlengkap</h4>
+            <p>Mengintegrasikan Konformer 3D, Target Protein PDB, Simulasi Docking Vina, Sketcher 2D/3D, Model BOILED-Egg, QSAR ChEMBL, dan openFDA FAERS.</p>
           </div>
           <div class="info-card">
-            <h4 class="secondary"><i class="fa-solid fa-graduation-cap"></i> Dampak Pedagogis & Riset</h4>
-            <p>Mendemokratisasi akses teknologi komputasi kimia medisinal canggih bagi mahasiswa dan dosen tanpa biaya software komersial.</p>
+            <h4 class="secondary"><i class="fa-solid fa-graduation-cap"></i> Validasi Presisi 100%</h4>
+            <p>Tervalidasi silang 100% dengan SwissADME (SIB) dan dilengkapi 34 senyawa terkurasi untuk keandalan riset online maupun offline.</p>
           </div>
           <div class="info-card">
-            <h4 class="success"><i class="fa-solid fa-rocket"></i> Rencana Pengembangan</h4>
-            <p>Ekspansi modul simulasi penambatan molekuler (Molecular Docking AutoDock Vina WebAssembly) untuk prediksi energi ikatan (kcal/mol).</p>
+            <h4 class="success"><i class="fa-solid fa-rocket"></i> Siap Pakai & Open-Source</h4>
+            <p>Dapat diakses secara langsung melalui GitHub Pages maupun server lokal tanpa instalasi perangkat lunak berbayar.</p>
           </div>
         </div>
         <div class="author-badge">
@@ -673,6 +671,10 @@
     <button class="nav-btn" id="prev-btn" title="Slide Sebelumnya"><i class="fa-solid fa-chevron-left"></i></button>
     <span class="slide-counter" id="slide-counter">1 / 12</span>
     <button class="nav-btn" id="next-btn" title="Slide Selanjutnya"><i class="fa-solid fa-chevron-right"></i></button>
+    <button class="nav-btn" id="audio-btn" title="Putar / Jeda Narasi Suara Presentasi" style="margin-left:8px; width:auto; padding:0 14px; border-radius:20px; font-size:13px; gap:6px;">
+      <i class="fa-solid fa-volume-high" id="audio-icon"></i> <span id="audio-label">Narasi Audio</span>
+    </button>
+    <audio id="presentation-audio" src="narasi_suara_wanita.mp3" preload="metadata"></audio>
   </div>
 
   <script>
@@ -680,6 +682,10 @@
     const prevBtn = document.getElementById('prev-btn');
     const nextBtn = document.getElementById('next-btn');
     const slideCounter = document.getElementById('slide-counter');
+    const audioBtn = document.getElementById('audio-btn');
+    const audioIcon = document.getElementById('audio-icon');
+    const audioLabel = document.getElementById('audio-label');
+    const presAudio = document.getElementById('presentation-audio');
     let currentIndex = 0;
 
     function updateSlides() {
@@ -690,7 +696,7 @@
           slide.classList.remove('active');
         }
       });
-      slideCounter.textContent = ${currentIndex + 1} / ;
+      slideCounter.textContent = (currentIndex + 1) + ' / ' + slides.length;
     }
 
     prevBtn.addEventListener('click', () => {
@@ -706,6 +712,24 @@
         updateSlides();
       }
     });
+
+    if (audioBtn && presAudio) {
+      audioBtn.addEventListener('click', () => {
+        if (presAudio.paused) {
+          presAudio.play();
+          audioIcon.className = 'fa-solid fa-pause';
+          audioLabel.textContent = 'Jeda Narasi';
+        } else {
+          presAudio.pause();
+          audioIcon.className = 'fa-solid fa-volume-high';
+          audioLabel.textContent = 'Narasi Audio';
+        }
+      });
+      presAudio.addEventListener('ended', () => {
+        audioIcon.className = 'fa-solid fa-volume-high';
+        audioLabel.textContent = 'Narasi Audio';
+      });
+    }
 
     document.addEventListener('keydown', (e) => {
       if (e.key === 'ArrowRight' || e.key === ' ') {
