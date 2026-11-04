@@ -19,10 +19,11 @@ Aplikasi **PharmaPulse 3D** dikembangkan untuk memberikan platform komputasi kim
 
 ## 2. Fitur Utama & Metodologi Komputasi
 
-### A. Pemodelan QSAR (Quantitative Structure-Activity Relationship) Data ChEMBL
+### A. Pemodelan QSAR & Ensemble Machine Learning Data ChEMBL
 * **Korelasi Bioaktivitas Real:** Aplikasi mengekstraksi data daya hambat $IC_{50}$ (nM) dari ChEMBL berdasarkan **InChIKey** senyawa seri analog untuk dikonversi menjadi $pIC_{50}$:
   $$pIC_{50} = -\log_{10}(IC_{50} \times 10^{-9})$$
-* **Persamaan Regresi Linier QSAR:** Memplotkan hubungan $pIC_{50}$ (Sumbu Y) terhadap Lipofilitas $XLogP$ (Sumbu X) lengkap dengan persamaan regresi $y = mx + c$ dan koefisien determinasi $R^2$.
+* **Persamaan Regresi Linier QSAR & Validasi OECD:** Memplotkan hubungan $pIC_{50}$ (Sumbu Y) terhadap Lipofilitas $XLogP$ (Sumbu X) lengkap dengan persamaan regresi $y = mx + c$, koefisien determinasi $R^2$, validasi silang $Q^2_{\text{LOO}}$, dan uji *Applicability Domain* (Leverage $h_i \le h^*$).
+* **Komparasi 4 Model Machine Learning (Multi-Model Ensemble):** Menyediakan pembandingan prediksi secara *real-time* antara **Linear OLS/Ridge**, **Random Forest Regressor (15 Bootstrap CART Trees)**, **Multi-Layer Perceptron Neural Network (Arsitektur 5→8→4→1 dengan aktivasi $\tanh/\text{ELU}$)**, dan **Stacking Meta-Ensemble**, dilengkapi dekonvolusi fitur **Explainable AI (SHAP Attribution)** serta model klasifikasi **Logistic Regression QSTR** untuk prediksi kardiotoksisitas hERG dan hepatotoksisitas DILI.
 
 ### B. Evaluasi Lipinski's Rule of Five (RO5) & Saringan Bioavailabilitas
 1. **Bobot Molekul (MW):** $\le 500\text{ g/mol}$

@@ -251,38 +251,33 @@ def build_presentation():
     ], SUCCESS)
 
     # =============================================================
-    # SLIDE 5: Pemodelan QSAR & Kalkulator Bioaktivitas Interaktif (NEW!)
+    # SLIDE 5: Pemodelan QSAR & Ensemble Machine Learning Interaktif
     # =============================================================
     s5 = prs.slides.add_slide(blank_layout)
     set_slide_bg(s5)
-    add_header(s5, "4. Pemodelan QSAR (pIC50) & Kalkulator Bioaktivitas Interaktif")
+    add_header(s5, "4. Pemodelan QSAR (pIC50), Ensemble Machine Learning & XAI")
     add_footer(s5, 5)
 
-    create_card(s5, Inches(0.8), Inches(1.7), Inches(3.7), Inches(4.9), "Konsep & Persamaan QSAR", [
+    create_card(s5, Inches(0.8), Inches(1.7), Inches(3.7), Inches(4.9), "Konsep QSAR & Validasi OECD", [
         "- Quantitative Structure-Activity Relationship mengaitkan fitur fisikokimia dengan potensi biologis.",
-        "- Persamaan Multi-Deskriptor:",
-        "  pIC50 = 8.12 - 0.28(WLogP) - 0.012(TPSA) - 0.003(MW)",
+        "- Validasi OECD Principle 3 & 4: Leave-One-Out Cross-Validation (Q2_LOO) & Leverage Applicability Domain (h <= h*).",
         "- Koefisien Determinasi R2 > 0.85 tervalidasi terhadap seri analog bioaktif ChEMBL.",
-        "- Konversi Logaritmik Bioaktivitas:",
-        "  pIC50 = -log10(IC50 M)",
-        "- Menghasilkan estimasi konsentrasi penghambatan enzimatis IC50 dalam satuan nanomolar (nM)."
+        "- Konversi Logaritmik Bioaktivitas: pIC50 = -log10(IC50 M) & energi bebas Gibbs (delta G = -1.364 * pIC50)."
     ], PRIMARY)
 
-    create_card(s5, Inches(4.8), Inches(1.7), Inches(3.7), Inches(4.9), "Kalkulator QSAR Interaktif Baru", [
-        "- Fitur Simulator Dinamis: Pengguna dapat menginputkan deskriptor manual secara bebas:",
-        "  * Bobot Molekul (MW)",
-        "  * Lipofilisitas (LogP / WLogP)",
-        "  * Luas Permukaan Polar (TPSA)",
-        "  * Donor Ikatan Hidrogen (HBD)",
-        "  * Akseptor Ikatan Hidrogen (HBA)",
-        "- Respon Komputasi Real-time: Nilai prediksi pIC50 dan IC50 langsung dihitung saat slider/input berubah.",
-        "- Interpretasi Potensi Otomatis: High Potency (<100 nM), Moderate, atau Low Potency."
+    create_card(s5, Inches(4.8), Inches(1.7), Inches(3.7), Inches(4.9), "Ensemble 4 Model Machine Learning", [
+        "- Komparasi 4 Algoritma ML secara Real-Time:",
+        "  1. Stacking Meta-Ensemble (Inverse-Variance Weighted Consensus).",
+        "  2. Linear OLS / Ridge QSAR Regressor.",
+        "  3. Random Forest Regressor (15 Bootstrap CART Decision Trees).",
+        "  4. MLP Neural Network (Arsitektur 5->8->4->1 dengan aktivasi tanh & ELU).",
+        "- Explainable AI (XAI): Dekonvolusi kontribusi aditif SHAP-like untuk tiap deskriptor molekuler."
     ], SECONDARY)
 
     create_card(s5, Inches(8.8), Inches(1.7), Inches(3.7), Inches(4.9), "Validasi Seri Analog ChEMBL", [
         "- Membandingkan prediksi in silico terhadap data eksperimental laboratorium in vitro riil dari repositori ChEMBL.",
         "- Tabel seri analog komparatif dengan nomor bioassay, nilai IC50 (nM), dan pIC50 terpublikasi.",
-        "- Estimasi konstanta inhibisi target (Ki) dan afinitas termodinamika energi bebas pengikatan (delta G).",
+        "- Estimasi Lipophilic Ligand Efficiency (LLE = pIC50 - LogP) dan interval kepercayaan 95%.",
         "- Memandu desain gugus farmakofor untuk peningkatan selektivitas pengikatan enzim target."
     ], ACCENT)
 

@@ -898,6 +898,21 @@
                   </div>
                 </div>
 
+                <!-- Multi-Model Machine Learning Ensemble Benchmark (OLS vs Random Forest vs MLP Neural Net) -->
+                <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.08);">
+                  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
+                    <span style="font-size:12px; font-weight:700; color:#cbd5e1;">
+                      <i class="fa-solid fa-microchip" style="color:#38bdf8;"></i> Komparasi Algoritma Machine Learning (Klik Kartu Model untuk Mengubah Mode Prediksi Utama):
+                    </span>
+                    <span id="ml-consensus-badge" class="badge" style="background:rgba(16,185,129,0.18); color:#34d399; border:1px solid rgba(16,185,129,0.35); font-size:11px; padding:3px 10px;">
+                      Konsensus 3 Model: 96.4% (Deviasi &sigma; = 0.08)
+                    </span>
+                  </div>
+                  <div id="qsar-ml-models-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(195px, 1fr)); gap:10px;">
+                    <!-- Populated dynamically with Linear OLS/Ridge, Random Forest (15 Trees), MLP Neural Net (5-8-4-1), and Stacking Meta-Ensemble -->
+                  </div>
+                </div>
+
                 <!-- Explainable AI (XAI) SHAP-like Feature Attribution Breakdown -->
                 <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.08);">
                   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
@@ -1383,7 +1398,7 @@
 
   </div>
 
-    <script src="app.js?v=20261026_fixed3d"></script>
+    <script src="app.js?v=20261105_ml_ensemble"></script>
   <script src="cadd_ext_pdb.js?v=20261028"></script>
   <script src="cadd_ext_sketcher.js?v=20261028"></script>
   <script src="cadd_ext_panels.js?v=20261028"></script>

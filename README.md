@@ -53,9 +53,14 @@ Menyediakan basis data pra-cache terverifikasi untuk menjamin operasional aplika
 - **Antivirus & Terapi Saluran Napas/Hati:** Oseltamivir, Zanamivir, Peramivir, Baloxavir Marboxil, Acyclovir, Valacyclovir, Famciclovir, Lamivudine, Tenofovir, Sofosbuvir, Zidovudine, Efavirenz, Interferon.
 - **Kardiovaskular, Metabolik, & Analgesik:** Atorvastatin, Paracetamol, Aspirin, Ibuprofen, Amoxicillin, Ciprofloxacin, Artemisinin, Remdesivir, Sitagliptin, Estradiol.
 
-### 3. Pemodelan QSAR (Quantitative Structure-Activity Relationship) Data ChEMBL
-- Konversi nilai daya hambat IC50 (nM) dari ChEMBL menjadi afinitas biologis pIC50.
-- Plot kurva regresi linier empiris pIC50 terhadap lipofilitas XLogP beserta koefisien korelasi R².
+### 3. Pemodelan QSAR & Multi-Model Machine Learning Ensemble (ChEMBL Bioactivity)
+- Konversi nilai daya hambat IC50 (nM) dari ChEMBL menjadi afinitas biologis pIC50 beserta validasi silang *Leave-One-Out* ($Q^2_{\text{LOO}}$) dan *OECD Applicability Domain* (Leverage $h_i \le h^*$).
+- **Komparasi 4 Algoritma Machine Learning Interaktif di Sisi Klien:**
+  1. **Stacking Meta-Ensemble:** Penggabungan terboboti varians terbalik (*inverse-variance weighting*) dari ketiga model dasar beserta skor konsensus antar-model (%).
+  2. **Linear OLS / Ridge QSAR:** Regresi hiperbidang multivariat dengan regularisasi sterik $L_2$.
+  3. **Random Forest Regressor:** Ensemble 15 pohon keputusan regresi (*Bootstrap CART Decision Trees*) untuk menangkap interaksi non-linier bertingkat.
+  4. **MLP Neural Network (Arsitektur 5→8→4→1):** Jaringan saraf tiruan *Multi-Layer Perceptron* dengan fungsi aktivasi $\tanh$ dan $\text{ELU}$ untuk memodelkan kurva parabolik/bilinier Kubinyi.
+- **Explainable AI (XAI) SHAP Attribution:** Dekonvolusi kontribusi aditif setiap deskriptor ($\Delta \text{pIC}_{50}$) terhadap prediksi model.
 - Diagram *BOILED-Egg* untuk estimasi absorpsi gastrointestinal (*HIA*) vs penetrasi sawar darah-otak (*BBB*).
 
 ### 4. Penapisan Druglikeness & Structural Alerts

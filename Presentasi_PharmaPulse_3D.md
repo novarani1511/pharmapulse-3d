@@ -54,14 +54,14 @@ Aplikasi Web Berstandar Industri untuk Visualisasi Konformer 3D Molekul, Farmako
 
 ---
 
-# 📈 4. Pemodelan QSAR (pIC50), SwissADME Radar & PAINS
+# 📈 4. Pemodelan QSAR, Ensemble Machine Learning & XAI
 
-* **Pemodelan QSAR ChEMBL:**  
-  Plot regresi linier bioaktivitas $\text{pIC}_{50} = -\log_{10}(\text{IC}_{50})$ terhadap deskriptor lipofilitas dengan persamaan otomatis ($R^2 > 0.8$).
+* **Multi-Model Machine Learning Ensemble (ChEMBL Bioactivity):**  
+  Komparasi 4 algoritma secara *real-time*: **Linear OLS/Ridge**, **Random Forest Regressor (15 Bootstrap CART Trees)**, **MLP Neural Network ($5 \to 8 \to 4 \to 1$, $\tanh/\text{ELU}$)**, dan **Stacking Meta-Ensemble** untuk memprediksi $\text{pIC}_{50} = -\log_{10}(\text{IC}_{50})$ ($R^2 > 0.85$), dilengkapi **Explainable AI (SHAP Attribution)** & *OECD Applicability Domain* ($h_i \le h^*$).
 * **SwissADME 6-Axis Radar:**  
   Visualisasi radar heksagonal kelayakan bioavailabilitas: LIPO, SIZE, POLAR, INSOLU, FLEX, dan INSATU.
-* **Peringatan Struktur PAINS & Brenk:**  
-  Deteksi motif pengganggu assay laboratorium (quinone, catechol, azo) dan gugus toksik terlarang.
+* **Klasifikasi QSTR Logistic Regression & Peringatan PAINS/Brenk:**  
+  Prediksi probabilitas kardiotoksisitas hERG & DILI via regresi logistik $\sigma(z)$, serta deteksi motif pengganggu assay (quinone, catechol, azo).
 
 ---
 

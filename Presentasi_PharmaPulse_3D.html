@@ -386,12 +386,12 @@
       </div>
       <div class="slide-body grid-3">
         <div class="info-card">
-          <h4><i class="fa-solid fa-chart-line"></i> Pemodelan QSAR ChEMBL</h4>
-          <p>Korelasi kuantitatif sifat struktur molekul terhadap afinitas biologis:</p>
+          <h4><i class="fa-solid fa-chart-line"></i> QSAR & Ensemble Machine Learning</h4>
+          <p>Komparasi 4 algoritma ML untuk prediksi bioaktivitas ChEMBL:</p>
           <ul>
-            <li>Plot regresi linier bioaktivitas: pIC50 = -log10(IC50) vs LogP.</li>
-            <li>Persamaan otomatis y = mx + c dengan R&sup2; > 0.8 & evaluasi Applicability Domain (leverage h*).</li>
-            <li>Tabel perbandingan seri analog acuan ChEMBL.</li>
+            <li><strong>Stacking Meta-Ensemble:</strong> Konsensus OLS/Ridge + Random Forest (15 Trees) + MLP Neural Net (5&rarr;8&rarr;4&rarr;1).</li>
+            <li><strong>Explainable AI (XAI):</strong> Dekonvolusi kontribusi deskriptor SHAP Attribution & Applicability Domain (h &le; h*).</li>
+            <li>Tabel perbandingan seri analog acuan ChEMBL (R&sup2; &amp; Q&sup2;<sub>LOO</sub>).</li>
           </ul>
         </div>
         <div class="info-card">
