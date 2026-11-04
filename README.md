@@ -36,7 +36,9 @@ Repositori ini memuat seluruh artefak, kode sumber aplikasi, dokumentasi laporan
 | | `generate_pptx.py` | Skrip otomasi Python (`python-pptx`) untuk menyusun dan mengekspor salindia presentasi PowerPoint secara terprogram |
 | **Dokumen Proposal & Laporan** | `Proposal_Inovasi_AI_PharmaPulse_3D.docx` | Dokumen resmi Proposal Inovasi AI & Kimia Komputasi PharmaPulse 3D format Microsoft Word |
 | | `Laporan_Proyek_PharmaPulse_3D.md` | Laporan ilmiah komprehensif, mencakup landasan teori, metodologi komputasi, dan validasi terhadap SwissADME |
-| **Media Audio** | `narasi_suara_wanita.mp3` | Rekaman audio narasi profesional (suara wanita) untuk panduan presentasi dan demo video |
+| **Media Video & Audio** | `Demo_Aplikasi_PharmaPulse_3D.mp4` | Video demonstrasi aplikasi Full HD 1080p (durasi ~3 menit) lengkap dengan visualisasi konformer 3D, simulasi 7 modul CADD & Ensemble ML, subtitle, dan narasi suara |
+| | `narasi_suara_wanita.mp3` | Rekaman audio narasi profesional (suara wanita) untuk panduan presentasi dan demo video |
+| | `generate_demo_video.py` | Skrip generator video demonstrasi otomatis berbasis Python (Pillow, RDKit 3D/2D, & FFmpeg) |
 
 ---
 
